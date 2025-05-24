@@ -1,5 +1,5 @@
 from typing import Callable
-
+from rngs.rng import RNG
 
 class MonteCarlo:
     """
@@ -9,7 +9,7 @@ class MonteCarlo:
     @staticmethod
     def method(Ndim: int, Nsamples: int,
                g: Callable[[float], float],
-               random_method: Callable[[], float]) -> float:
+               rng: RNG) -> float:
         """
         Método de MonteCarlo para N variables
 
@@ -17,13 +17,13 @@ class MonteCarlo:
             Ndim (int): Número de dimensiones
             Nsamples (int): Número de muestras
             g (Callable[[float], float]): Función a aplicar
-            random_method (Callable[[], float]): Método generador de números random
+            random_method (rng: RNG): objeto de la clase RNG
 
         Returns:
             float: Estimación de la esperanza de g sobre un dominio uniforme.
         """
         integral = 0
         for _ in range(Nsamples):
-            U_list = [random_method() for _ in range(Ndim)]
+            U_list = [rng.rand01() for _ in range(Ndim)]
             integral += g(*U_list)
         return integral / Nsamples
