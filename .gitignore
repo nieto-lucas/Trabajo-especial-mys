@@ -1,0 +1,63 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Entorno virtual
+venv/
+
+# Archivos de configuración del entorno
+.env
+.venv
+*.env
+*.venv
+
+# Archivos de logs y temporales
+*.log
+*.tmp
+*.bak
+
+# Archivos de caché
+.cache/
+*.pyc
+*.pyo
+*.pyd
+
+# Archivos generados por herramientas de ciencia de datos
+*.h5
+*.hdf5
+*.db
+*.sqlite
+*.pkl
+*.joblib
+*.npz
+*.npy
+
+# Archivos de notebook convertidos
+*.html
+*.pdf
+*.tex
+
+# Imágenes
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.bmp
+*.tiff
+
+# Configuración de sistemas operativos
+.DS_Store
+Thumbs.db
+
+# Carpetas de IDEs y editores
+.vscode/
+.idea/
+
+# Configuración de Jupyter Lab
+.jupyter/
+.ipython/
