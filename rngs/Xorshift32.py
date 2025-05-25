@@ -1,8 +1,8 @@
-from .rng import RNG
+from .RNG import RNG
 from time import time
 
 class Xorshift(RNG):
-    def __init__(self, seed: int = time()):
+    def __init__(self, seed: int = int(time())):
         super().__init__(seed)
 
     def next(self) -> int:
