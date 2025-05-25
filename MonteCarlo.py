@@ -1,5 +1,5 @@
 from typing import Callable
-from rngs.rng import RNG
+from rngs.RNG import RNG
 
 class MonteCarlo:
     """
