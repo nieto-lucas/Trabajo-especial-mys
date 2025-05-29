@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from time import time
 
 class RNG(ABC):
     """
@@ -36,3 +37,17 @@ class RNG(ABC):
             float: siguiente número de la secuencia normalizado en [0, 1) 
         """
         pass
+
+    def time_next(self) -> float:
+        """
+        Metódo para obtener el tiempo del siguiente número en la secuencia de
+        un generador.
+
+        Returns:
+            float: tiempo que demora el generador en mili-segundos
+        """
+        start = time()
+        self.next()
+        end = time()
+        time_elapsed = end - start
+        return time_elapsed *1000
