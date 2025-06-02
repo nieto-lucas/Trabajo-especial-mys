@@ -40,21 +40,29 @@ class Utils:
         return np.var(estimations, ddof=1)
     
     @staticmethod
-    def cuadratic_error(estimation: float, d: int = 1) -> float:
+    def cuadratic_error(estimations: List[float], d: int = 1) -> float:
         """
         Metódo para calcular el error cuadratico de una estimación
-        restpecto al valor real de la integral del hypercubo.
+        restpecto al valor real de la integral de la función guasiana en
+        un hipercubo.
 
         Args:
-            estimation (float): estimación que se va a comparar con
-                                el valor exacto de la inegral con dim d
-            d (int): dimensión del hypercubo para calcular la integral
+            estimations (List[float]): estimaciones que se utilizan para
+                                       calcular el error cuadratico medio
+                                       de las estimaciones para una dimension d.
+            d (int): dimensión del hipercubo para calcular la integral
 
         Returns:
-            float: Error cuadratico de la estimación respecto al resultado
-                    exacto de la integral para un hypercubo de dim d
+            float: Error cuadratico medio de la estimación respecto al resultado
+                    exacto de la integral de la función gausiana en un hipercubo
+                    de dim d
         """
         if d < 1:
             raise Exception("Error: la dimensión debe ser mayor a 1")
         
-        return (estimation - INTEGRAL_VAL_D1**d)**2
+        integral_val = INTEGRAL_VAL_D1**d 
+        cuadratic_error = 0
+        for estimation in estimations:
+            cuadratic_error += (estimation - integral_val)**2
+
+        return cuadratic_error/len(estimations)
