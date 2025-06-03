@@ -1,6 +1,11 @@
-from typing import List
+from typing import List, Dict
 import numpy as np
+from MonteCarlo import MonteCarlo
 from constants import INTEGRAL_VAL_D1
+from rngs import RNG
+from rngs.Xorshift32 import Xorshift
+from rngs.MersenneTwister import MersenneTwister
+from rngs.LCG import LCG
 
 class Utils:
     """
@@ -66,3 +71,113 @@ class Utils:
             cuadratic_error += (estimation - integral_val)**2
 
         return cuadratic_error/len(estimations)
+    
+    @staticmethod
+    def get_samples(Nsamples: int, Nsim: int, seed: int, d: int = 1) -> Dict[str, List[float]]:
+        """
+        Metódo para obtener muestras de estimaciones de Monte Carlo con parametros
+        especificados a tráves de los argumentos y los tres rngs, MersenneTwister,
+        LCG y Xorshift
+
+        Args:
+            Nsamples (int): numero de muestras que se desean obtener
+            Nsim (int): numero de simulaciones de Monte Carlo por muestra
+            d (int): dimension del hipercubo para calcular la integral 
+        
+        Returns:
+            Dict[str, List[float]]: donde las claves se corresponden a los
+                                    nombres de las clases de rngs: LCG, 
+                                    Xorshift y MersenneTwister 
+        """
+        if d < 1:
+            raise Exception("Error: la dimensión debe ser mayor a 1")
+
+        # inicialización de los rngs
+        lcg, lcg_estimation_samples = LCG(seed), []
+        xorshift, xorshift_estimation_samples = Xorshift(seed), []
+        mt, mt_estimation_samples = MersenneTwister(seed), []
+        # cada rng recolecta muestras
+        for _ in range(Nsamples): 
+            lcg_estimation_samples.append(
+                MonteCarlo.method(
+                    Nsamples=Nsim, 
+                    g=Utils.gaussian_function,
+                    rng=lcg
+                ) ** d
+            )
+            xorshift_estimation_samples.append(
+                MonteCarlo.method(
+                    Nsamples=Nsim, 
+                    g=Utils.gaussian_function,
+                    rng=xorshift
+                ) ** d
+            )
+            mt_estimation_samples.append(
+                MonteCarlo.method(
+                    Nsamples=Nsim, 
+                    g=Utils.gaussian_function,
+                    rng=mt
+                ) ** d
+            )
+        dict_samples = {
+            "LCG" : lcg_estimation_samples,
+            "Xorshift" : xorshift_estimation_samples,
+            "MersenneTwister": mt_estimation_samples
+        }
+        return dict_samples
+
+    @staticmethod
+    def compare_var(Nsamples: int, Nsim: int, d: int = 1) -> Dict[str, float]:
+        """
+        Metódo para comparar varianza entre muestras de estimaciones de Monte Carlo
+        para todos los rngs: LCG, Xorshift, MersenneTwister
+
+        Args:
+            Nsamples (int): numero de muestras que se desean obtener
+            Nsim (int): numero de simulaciones de Monte Carlo por muestra
+            d (int): dimension del hipercubo para calcular la integral 
+        
+        Returns:
+            Dict[str, float]: varianzas, donde las claves se corresponden a 
+                              los nombres de las clases de rngs: LCG, 
+                              Xorshift y MersenneTwister 
+        """
+        try:
+            samples = Utils.get_samples(Nsamples=Nsamples,
+                                        Nsim=Nsim,
+                                        seed=1234567,
+                                        d=d)
+            samples["LCG"] = Utils.variance(samples["LCG"])
+            samples["Xorshift"] = Utils.variance(samples["Xorshift"])
+            samples["MersenneTwister"] = Utils.variance(samples["MersenneTwister"])
+            return samples
+        except Exception as e:
+            raise e
+    
+    @staticmethod
+    def compare_cuadratic_error(Nsamples: int, Nsim: int, d: int = 1):
+        """
+        Metódo para comparar varianza entre muestras de estimaciones de Monte Carlo
+        para todos los rngs: LCG, Xorshift, MersenneTwister
+
+        Args:
+            Nsamples (int): numero de muestras que se desean obtener
+            Nsim (int): numero de simulaciones de Monte Carlo por muestra
+            d (int): dimension del hipercubo para calcular la integral 
+        
+        Returns:
+            Dict[str, float]: errores cuadraticos medios, donde las claves 
+                              se corresponden a los nombres de las clases de 
+                              rngs: LCG, Xorshift y MersenneTwister 
+        """
+        try:
+            samples = Utils.get_samples(Nsamples=Nsamples,
+                                        Nsim=Nsim,
+                                        seed=1234567,
+                                        d=d)
+            samples["LCG"] = Utils.cuadratic_error(samples["LCG"])
+            samples["Xorshift"] = Utils.cuadratic_error(samples["Xorshift"])
+            samples["MersenneTwister"] = Utils.cuadratic_error(samples["MersenneTwister"])
+            return samples
+        except Exception as e:
+            raise e
