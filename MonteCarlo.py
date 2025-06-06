@@ -41,9 +41,9 @@ class MonteCarlo:
             random_method (rng: RNG): objeto de la clase RNG
 
         Returns:
-            Tuple[float, float]: 
-                0. Tiempo que demora el metodo de Monte Carlo en segundos.
-                1. Estimación de la esperanza de g sobre un dominio uniforme.
+            Tuple[float,float]: Tiempo que demora el metodo de Monte Carlo
+            en segundos y estimación de la esperanza de g sobre un dominio
+            uniforme.
         """
         start = time()
         estimation = MonteCarlo.method(Nsamples, g, rng)
