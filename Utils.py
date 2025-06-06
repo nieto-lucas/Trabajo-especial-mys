@@ -7,6 +7,7 @@ from rngs.RNG import RNG
 from rngs.Xorshift32 import Xorshift
 from rngs.MersenneTwister import MersenneTwister
 from rngs.LCG import LCG
+from time import time
 
 class Utils:
     """
@@ -50,7 +51,6 @@ class Utils:
                                       rng=rng
                                       ) ** d
         return estimation
-    
 
     @staticmethod
     def rng_muestral_stat_estimation(Nsim: int, Nsamples: int, 
@@ -93,7 +93,6 @@ class Utils:
         except Exception as e:
             raise e
     
-
     @staticmethod
     def rng_cuadratic_error_estimation(Nsim: int, Nsamples: int, 
                                         rng: RNG, d: int = 1) -> float:
@@ -127,7 +126,35 @@ class Utils:
         
         except Exception as e:
             raise e 
+        
+    @staticmethod
+    def rng_compare_time(Nsim: int, Nsamples: int, 
+                        rng: RNG, d: int = 1) -> float:
+        """
+        Metódo para obtener el tiempo entre muestras de estimaciones con Monte Carlo 
+        de la integral de una función gaussiana en un hipercubo de dimensiones d, 
+        para algun rng
 
+        Args:
+            Nsim (int): numero de simulaciones de Monte Carlo
+            Nsamples (int): numero de muestras unfiormes por iteracion
+            rng (RNG): objeto de la clase RNG para obtener uniformes
+            d (int): dimension del hipercubo para calcular la integral 
+
+        Returns:
+            float: tiempo de demora de Nsim-estimaciones de la integral
+        """
+        try:
+            start = time()
+            for _ in range(Nsim):
+                Utils.rng_estimation_gaussian_in_hipercube(Nsamples=Nsamples,
+                                                            rng=rng, 
+                                                            d=d)
+            end = time()
+            return end - start
+
+        except Exception as e:
+            raise e
 
     @staticmethod
     def compare_muestral_stats(Nsim: int, Nsamples: int, 
@@ -165,10 +192,10 @@ class Utils:
         
         except Exception as e:
             raise e
-    
 
     @staticmethod
-    def compare_cuadratic_error(Nsamples: int, Nsim: int, seed: int, d: int = 1):
+    def compare_cuadratic_error(Nsamples: int, Nsim: int, 
+                                seed: int, d: int = 1) -> Dict[str, float]:
         """
         Metódo para comparar varianza entre muestras de estimaciones con Monte Carlo
         de la integral de una función gaussiana en un hipercubo de dimensión d,
@@ -199,6 +226,43 @@ class Utils:
                                                                     rng=rng, d=d) 
                 cuadratic_errors[name] = cuadratic_error
             return cuadratic_errors
+
+        except Exception as e:
+            raise e
+        
+    @staticmethod
+    def compare_time(Nsamples: int, Nsim: int, 
+                    seed: int, d: int = 1) -> Dict[str, float]: 
+        """
+        Metódo para comparar tiempo entre muestras de estimaciones con Monte Carlo
+        de la integral de una función gaussiana en un hipercubo de dimensión d,
+        para todos los rngs: LCG, Xorshift, MersenneTwister
+
+        Args:
+            Nsim (int): numero de simulaciones de Monte Carlo
+            Nsamples (int): numero de muestras unfiormes por iteracion
+            d (int): dimension del hipercubo para calcular la integral 
+        
+        Returns:
+            Dict[str,float]: entradas con errores cuadraticos medios, 
+            donde las claves se corresponden a los nombres de las clases de 
+            rngs: LCG, Xorshift y MersenneTwister 
+        """
+        # inicialización de los rngs
+        rngs = {
+            "LCG": LCG(seed),
+            "Xorshift": Xorshift(seed),
+            "MersenneTwister": MersenneTwister(seed),
+        }
+        times = {}
+
+        try:
+            for name, rng in rngs.items():
+                time = Utils.rng_compare_time(Nsamples=Nsamples,
+                                            Nsim=Nsim,
+                                            rng=rng, d=d)
+                times[name] = time
+            return times
 
         except Exception as e:
             raise e
