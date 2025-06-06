@@ -36,3 +36,12 @@ class LCG(RNG):
 
     def rand01(self):
         return self.next() / (2 ** 31)
+    
+    def name(self) -> str:
+        """
+        Devuelve el nombre del generador
+
+        Returns:
+            str: Nombre del generador LCG
+        """
+        return "LCG"

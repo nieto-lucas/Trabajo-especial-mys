@@ -30,3 +30,12 @@ class Xorshift(RNG):
 
     def rand01(self):
         return self.next() /(2 ** 32)
+    
+    def name(self) -> str:
+        """
+        Devuelve el nombre del generador
+
+        Returns:
+            str: Nombre del generador LCG
+        """
+        return "Xorshift 32"

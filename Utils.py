@@ -1,8 +1,9 @@
 from typing import List, Dict, Tuple
 import numpy as np
+import matplotlib.pyplot as plt
 from MonteCarlo import MonteCarlo
 from constants import INTEGRAL_VAL_D1
-from rngs import RNG
+from rngs.RNG import RNG
 from rngs.Xorshift32 import Xorshift
 from rngs.MersenneTwister import MersenneTwister
 from rngs.LCG import LCG
@@ -201,3 +202,30 @@ class Utils:
 
         except Exception as e:
             raise e
+
+    @staticmethod    
+    def plot_3D_generators(generators:List[RNG], Nsamples:int):
+        """
+        Ploteo 3D de los tres generadores para chequear generación
+        de Hiperplanos.
+
+        Args:
+            generators (List[RNG]): Lista de los generadores
+            Nsamples (int): Número de muestras
+        """
+        fig = plt.figure(figsize=(15, 5))  
+
+        ax1 = fig.add_subplot(1, 3, 1, projection='3d')
+        ax1.view_init(elev=50, azim=-60)
+        generators[0].plot_3d_distribution(Nsamples=Nsamples, color="#5B7553", ax=ax1)
+
+        ax2 = fig.add_subplot(1, 3, 2, projection='3d')
+        ax2.view_init(elev=50, azim=-60)
+        generators[1].plot_3d_distribution(Nsamples=Nsamples, color="#E76D83", ax=ax2)
+
+        ax3 = fig.add_subplot(1, 3, 3, projection='3d')
+        ax3.view_init(elev=50, azim=-60)
+        generators[2].plot_3d_distribution(Nsamples=Nsamples, color="#DACC3E", ax=ax3)
+
+        plt.tight_layout()
+        plt.show()

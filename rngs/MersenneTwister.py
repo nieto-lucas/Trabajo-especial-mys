@@ -92,6 +92,11 @@ class MersenneTwister(RNG):
         print(f"Seed: {self.get_seed()}")
         print(f"Primeros 5 valores del estado: {self._mt[:5]}")
 
+    def name(self) -> str:
+        """
+        Devuelve el nombre del generador
 
-
-
+        Returns:
+            str: Nombre del generador LCG
+        """
+        return "Mersenne Twister"
