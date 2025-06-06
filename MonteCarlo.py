@@ -30,29 +30,6 @@ class MonteCarlo:
         return integral / Nsamples
     
     @staticmethod
-    def time_method(Nsamples: int,
-                    g: Callable[[float], float],
-                    rng: RNG) -> Tuple[float, float]:
-        """
-        Método de MonteCarlo para 1 variable
-
-        Args:
-            Nsamples (int): Número de muestras
-            g (Callable[[float], float]): Función a aplicar
-            rng: (RNG): objeto de la clase RNG
-
-        Returns:
-            Tuple[float,float]: Tiempo que demora el metodo de Monte Carlo
-            en segundos y estimación de la esperanza de g sobre un dominio
-            uniforme.
-        """
-        start = time()
-        estimation = MonteCarlo.method(Nsamples, g, rng)
-        end = time()
-        time_elapsed = end - start
-        return time_elapsed, estimation
-    
-    @staticmethod
     def get_parcials_method_Nvars(Nsamples: int,
                                 g: Callable[[np.ndarray], float],
                                 rng: RNG,
