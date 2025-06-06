@@ -1,7 +1,5 @@
 from abc import ABC, abstractmethod
-from time import time
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
 class RNG(ABC):
     """
@@ -47,22 +45,39 @@ class RNG(ABC):
         """
         pass
 
-    def plot_3d_distribution(self, Nsamples:int, color:str):
+    def plot_3d_distribution(self, Nsamples: int, color: str, ax=None):
+        """
+        Plotea la distribución 3D ordenada de los números generados por el RNG.
+
+        Args:
+            Nsamples (int): Número de muestras a generar para la distribución. 
+                            Debe ser al menos 3 para poder formar los puntos 3D.
+            color (str): Color utilizado para los puntos en el gráfico (ejemplo: '#FF0000').
+            ax (matplotlib.axes._subplots.Axes3DSubplot, optional): 
+                Objeto Axes3D donde se dibujará el gráfico. 
+                Si no se proporciona, la función creará una nueva figura y eje.
+                Defaults to None.
+
+        Raises:
+            ValueError: Si `Nsamples` es menor que 3, ya que no se pueden formar puntos 3D.
+        """
         if Nsamples < 3:
             raise ValueError("Se necesitan al menos 3 muestras.")
-        
-        values = [self.rand01() for _ in range(Nsamples)]
 
+        values = [self.rand01() for _ in range(Nsamples)]
         x_values = values[:-2]
         y_values = values[1:-1]
         z_values = values[2:]
 
-        fig = plt.figure(figsize=(5, 5))
-        ax = fig.add_subplot(111, projection='3d')
+        if ax is None:
+            fig = plt.figure(figsize=(5, 5))
+            ax = fig.add_subplot(111, projection='3d')
 
-        ax.scatter(x_values, y_values, z_values, c=color,  marker='o', s=10, alpha=0.6)
+        ax.scatter(x_values, y_values, z_values, c=color, marker='o', s=10, alpha=0.6)
         ax.set_title(f"Distribución 3D de puntos de {self.name()}")
         ax.set_xlabel("X")
         ax.set_ylabel("Y")
         ax.set_zlabel("Z")
-        plt.show()
+
+        if ax is None:
+            plt.show()
