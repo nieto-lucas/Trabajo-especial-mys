@@ -1,6 +1,7 @@
-from typing import Callable, Tuple
+from typing import Callable, Tuple, List
 from rngs.RNG import RNG
 from time import time
+import numpy as np
 
 class MonteCarlo:
     """
@@ -17,7 +18,7 @@ class MonteCarlo:
         Args:
             Nsamples (int): Número de muestras
             g (Callable[[float], float]): Función a aplicar
-            random_method (rng: RNG): objeto de la clase RNG
+            rng (RNG): objeto de la clase RNG
 
         Returns:
             float: Estimación de la esperanza de g sobre un dominio uniforme.
@@ -38,7 +39,7 @@ class MonteCarlo:
         Args:
             Nsamples (int): Número de muestras
             g (Callable[[float], float]): Función a aplicar
-            random_method (rng: RNG): objeto de la clase RNG
+            rng: (RNG): objeto de la clase RNG
 
         Returns:
             Tuple[float,float]: Tiempo que demora el metodo de Monte Carlo
@@ -50,3 +51,31 @@ class MonteCarlo:
         end = time()
         time_elapsed = end - start
         return time_elapsed, estimation
+    
+    @staticmethod
+    def get_parcials_method_Nvars(Nsamples: int,
+                                g: Callable[[np.ndarray], float],
+                                rng: RNG,
+                                Nvars: int) -> List[Tuple[List[float], float]]:
+        """
+        Método de MonteCarlo para Nvars-variable
+
+        Args:
+            Nsamples (int): Número de muestras
+            g (Callable[[float], float]): Función a aplicar
+            rng: (RNG): objeto de la clase RNG
+            Nvars (int): 
+
+        Returns:
+            List[Tuple[List[float],float]]: Lista con las uniformes generadas
+            por iteración de Monte Carlo y el resultado de valuar la función en
+            en esas uniformes generadas.
+        """
+        parcial_estims = []
+        integral = 0
+        for _ in range(Nsamples):
+            uniforms = np.array([rng.rand01() for _ in range(Nvars)])
+            parcial_result = g(uniforms)
+            integral += parcial_result
+            parcial_estims.append((uniforms, parcial_result))
+        return parcial_estims

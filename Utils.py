@@ -29,13 +29,27 @@ class Utils:
         return np.e**(-x**2)
     
     @staticmethod
+    def gaussian_func_multivar(Xs: np.ndarray) -> float:
+        """
+        Función multivariable que se usa para estimar el valor de la integral 
+        con metódo de Monte Carlo.
+
+        Args:
+            Xs(np.adarray): valor con el que se inicializa la función gaussiana 
+        
+        Returns: 
+            float: retorna el valor de la función gaussiana valuada en las variables
+        """
+        return np.exp(-np.sum(Xs**2))
+    
+    @staticmethod
     def rng_estimation_gaussian_in_hipercube(Nsamples: int, rng: RNG, d: int = 1) -> float:
         """
         Metódo para calcular la estimación con Monte Carlo de la integral de una
         función gaussiana en un hipercubo de dimensión d, para algun rng
         
         Args:
-            Nsamples (int): numero de muestras unfiormes por iteracion
+            Nsamples (int): numero de muestras uniformes por iteracion
             rng (RNG): objeto de la clase RNG para obtener uniformes
             d (int): dimension del hipercubo para calcular la integral
 
@@ -62,7 +76,7 @@ class Utils:
 
         Args:
             Nsim (int): numero de simulaciones de Monte Carlo
-            Nsamples (int): numero de muestras unfiormes por iteracion
+            Nsamples (int): numero de muestras uniformes por iteracion
             rng (RNG): objeto de la clase RNG para obtener uniformes
             d (int): dimension del hipercubo para calcular la integral
 
@@ -103,7 +117,7 @@ class Utils:
 
         Args:
             Nsim (int): numero de simulaciones de Monte Carlo
-            Nsamples (int): numero de muestras unfiormes por iteracion
+            Nsamples (int): numero de muestras uniformes por iteracion
             rng (RNG): objeto de la clase RNG para obtener uniformes
             d (int): dimension del hipercubo para calcular la integral 
 
@@ -137,7 +151,7 @@ class Utils:
 
         Args:
             Nsim (int): numero de simulaciones de Monte Carlo
-            Nsamples (int): numero de muestras unfiormes por iteracion
+            Nsamples (int): numero de muestras uniformes por iteracion
             rng (RNG): objeto de la clase RNG para obtener uniformes
             d (int): dimension del hipercubo para calcular la integral 
 
@@ -166,7 +180,8 @@ class Utils:
 
         Args:
             Nsim (int): numero de simulaciones de Monte Carlo
-            Nsamples (int): numero de muestras unfiormes por iteracion
+            Nsamples (int): numero de muestras uniformes por iteracion
+            seed (int): valor fijo para comparar generadores
             d (int): dimension del hipercubo para calcular la integral 
         
         Returns:
@@ -203,7 +218,8 @@ class Utils:
 
         Args:
             Nsim (int): numero de simulaciones de Monte Carlo
-            Nsamples (int): numero de muestras unfiormes por iteracion
+            Nsamples (int): numero de muestras uniformes por iteracion
+            seed (int): valor fijo para comparar generadores
             d (int): dimension del hipercubo para calcular la integral 
         
         Returns:
@@ -240,7 +256,8 @@ class Utils:
 
         Args:
             Nsim (int): numero de simulaciones de Monte Carlo
-            Nsamples (int): numero de muestras unfiormes por iteracion
+            Nsamples (int): numero de muestras uniformes por iteracion
+            seed (int): valor fijo para comparar generadores
             d (int): dimension del hipercubo para calcular la integral 
         
         Returns:
@@ -292,4 +309,41 @@ class Utils:
         generators[2].plot_3d_distribution(Nsamples=Nsamples, color="#DACC3E", ax=ax3)
 
         plt.tight_layout()
+        plt.show()
+
+    def plot_3D_gaussian_estimation(Nsamples: int, rng: RNG) -> None:
+        """
+        Ploteo 3D de la estimación con Monte Carlo de la integral
+        de una función gaussiana de de dos variables en un 
+        cubo [0,1)x[0,1)x[0,1).
+
+        Args:
+            Nsamples (int): numero de muestras uniformes por iteracion
+            rng (RNG): objeto de la clase RNG para obtener uniformes
+        """
+        samples = MonteCarlo.get_parcials_method_Nvars(Nsamples=Nsamples, 
+                                                  g=Utils.gaussian_func_multivar, 
+                                                  rng=rng, 
+                                                  Nvars=2)
+        samples_array = np.array(samples, dtype=object)
+        coords = np.stack(samples_array[:, 0])
+        z_samples = np.array(samples_array[:, 1], dtype=float)
+        x_samples = coords[:, 0]
+        y_samples = coords[:, 1]
+
+        integral_aprox = np.mean(z_samples)
+
+        X, Y = np.meshgrid(np.linspace(0, 1, 100), np.linspace(0, 1, 100))
+        Z = np.exp(-X**2-Y**2) 
+
+        fig = plt.figure()
+        ax = fig.add_subplot(111, projection='3d')
+        ax.plot_surface(X, Y, Z, cmap='plasma', alpha=0.4)
+
+        dx = dy = 1 / len(samples) ** 0.7
+        for x, y, z in zip(x_samples, y_samples, z_samples):
+            ax.bar3d(x, y, 0, dx, dy, z, color='red', alpha=0.3)
+
+        ax.view_init(elev=30, azim=60)
+        ax.set_title(f"Estimación de integral ≈ {integral_aprox:.4f}")
         plt.show()
