@@ -347,19 +347,3 @@ class Utils:
         ax.view_init(elev=30, azim=60)
         ax.set_title(f"Estimación de integral ≈ {integral_aprox:.4f}")
         plt.show()
-    
-    def print_timing_table(dimensional_results):
-        """
-        Printear tabla de comparativa de tiempos para
-        todas las dimensiones.
-
-        Args:
-            dimensional_results: Diccionario de resultados para las distintas dimensiones
-        """
-        print("| {:^13} | {:^18} | {:^11} |".format("Dimensión", "Generador", "Tiempo (s)"))
-        print("|" + "-" * 15 + "|" + "-" * 20 + "|" + "-" * 13 + "|")
-
-        for dim, results in dimensional_results.items():
-            for generator, time_sec in results.items():
-                print("| {:^13} | {:<18} | {:>11.6f} |".format(dim, generator, time_sec))
-            print("-" * 53)
