@@ -47,3 +47,46 @@ class Printers:
             ))
 
         print("-" * total_width + "\n")
+
+    @staticmethod
+    def print_timing_table(dimensional_results, Nsim, Nsamples):
+        """
+        Printear tabla de comparativa de tiempos para todas las dimensiones.
+
+        Args:
+            dimensional_results: Diccionario de resultados para las distintas dimensiones.
+            Nsim (int): Número de simulaciones realizadas.
+            Nsamples (int): Número de muestras por simulación.
+        """
+        # Ajustes de formato
+        total_width = 60
+        dim_width = 15
+        gen_width = 20
+        time_width = 15
+
+        # Línea superior con info centrada
+        print("-" * total_width)
+        sim_info = f"{Nsim} simulaciones, {Nsamples} muestras"
+        padding = (total_width - len(sim_info)) // 2
+        print(" " * padding + sim_info)
+        print("-" * total_width)
+
+        # Encabezado de tabla
+        print("| {:^{dw}} | {:^{gw}} | {:^{tw}} |".format(
+            "Dimensión", "Generador", "Tiempo (s)",
+            dw=dim_width, gw=gen_width, tw=time_width
+        ))
+        print("|" + "-" * (dim_width + 2) + "|" + "-" * (gen_width + 2) + "|" + "-" * (time_width + 2) + "|")
+
+        # Filas de contenido
+        for dim, results in dimensional_results.items():
+            keys = list(results.keys())
+            middle_index = len(keys) // 2
+            for i, generator in enumerate(keys):
+                time_sec = results[generator]
+                dim_str = dim if i == middle_index else ""
+                print("| {:^{dw}} | {:^{gw}} | {:^{tw}.6f} |".format(
+                    dim_str, generator, time_sec,
+                    dw=dim_width, gw=gen_width, tw=time_width
+                ))
+            print("-" * total_width)
