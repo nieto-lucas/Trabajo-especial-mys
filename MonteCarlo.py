@@ -1,7 +1,7 @@
 from typing import Callable, Tuple, List
 from rngs.RNG import RNG
-from time import time
 import numpy as np
+from numpy.typing import ArrayLike
 
 class MonteCarlo:
     """
@@ -31,7 +31,7 @@ class MonteCarlo:
     
     @staticmethod
     def get_parcials_method_Nvars(Nsamples: int,
-                                g: Callable[[np.ndarray], float],
+                                g: Callable[[ArrayLike], float],
                                 rng: RNG,
                                 Nvars: int) -> List[Tuple[List[float], float]]:
         """
@@ -39,9 +39,9 @@ class MonteCarlo:
 
         Args:
             Nsamples (int): Número de muestras
-            g (Callable[[float], float]): Función a aplicar
+            g (Callable[[ArrayLike], float]): Función a aplicar
             rng: (RNG): objeto de la clase RNG
-            Nvars (int): 
+            Nvars (int): numero de variables a simular
 
         Returns:
             List[Tuple[List[float],float]]: Lista con las uniformes generadas
