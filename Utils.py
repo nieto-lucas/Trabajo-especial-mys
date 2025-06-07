@@ -1,7 +1,7 @@
 from typing import List, Dict, Tuple
 import numpy as np
 import matplotlib.pyplot as plt
-from MonteCarlo import MonteCarlo
+from utils.MonteCarlo import MonteCarlo
 from constants import INTEGRAL_VAL_D1
 from rngs.RNG import RNG
 from rngs.Xorshift32 import Xorshift
