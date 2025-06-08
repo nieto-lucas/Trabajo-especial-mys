@@ -2,7 +2,7 @@ import numpy as np
 from numpy.typing import ArrayLike
 from typing import Callable
 
-class Test_helpers:
+class TestHelpers:
     """
     Función auxiliares para tests, por ejemplo estadisticos.
     """
