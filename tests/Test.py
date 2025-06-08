@@ -3,7 +3,7 @@ from rngs import *
 import numpy as np
 from random import random
 from scipy import stats
-from tests.Test_helpers import Test_helpers
+from tests.TestHelpers import TestHelpers
 
 class Test:
     """
@@ -29,7 +29,7 @@ class Test:
         # Ordeno las muestras
         x_samples = np.concatenate(([0], np.sort(list(samples)), [1]))
         # Utiliza como función F la func de distrib acumulada de la unif.
-        d = Test_helpers.KS_statistic(samples=x_samples, G=stats.uniform.cdf)
+        d = TestHelpers.KS_statistic(samples=x_samples, G=stats.uniform.cdf)
 
         prob = 0
         for _ in range(Nsim):
@@ -37,7 +37,7 @@ class Test:
             # Ordeno las muestras
             u_samples = np.concatenate(([0], np.sort(list(samples)), [1]))
             # Función identidad: G(u) = u
-            d_sim = Test_helpers.KS_statistic(samples=u_samples, G=lambda x: x)
+            d_sim = TestHelpers.KS_statistic(samples=u_samples, G=lambda x: x)
             if d_sim >= d:
                 prob += 1
         return prob/Nsim >= 0.05

@@ -20,7 +20,7 @@ class Plotters:
         """
         #Configuración del entorno inicial
         sns.set_theme()
-        pallete = sns.color_palette("hls", 8)
+        pallete = sns.color_palette("rocket")
 
         # Crear figura con un subplot por cada dimensión
         fig, axes = plt.subplots(1, len(dimensional_results), figsize=(5 * len(dimensional_results), 5))
