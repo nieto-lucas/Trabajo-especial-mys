@@ -8,7 +8,7 @@ class TestHelpers:
     """
 
     @staticmethod
-    def KS_statistic(samples: ArrayLike, G: Callable[[ArrayLike], ArrayLike]) -> float:
+    def KS_statistic(Nsamples:int, samples: ArrayLike, G: Callable[[ArrayLike], ArrayLike]) -> float:
         """
         Estadistico de Kolmogorov-Smirnov para una muestra
 
@@ -20,14 +20,19 @@ class TestHelpers:
         Returns:
             (float): Resultado del estadistico.
         """
-        n = len(samples)
+
+
         # Calculo la empírica
-        Fe_samples = np.concatenate(([0], np.arange(1, n+1, 1) / n,[1]))
-        # Distribución Uniforme Real
-        G_values = G(samples)
+        Fe_minus = np.arange(0, Nsamples) / Nsamples
+        Fe_plus = np.arange(1, Nsamples + 1) / Nsamples
+
+        # Distribución Uniforme Real y convierto en arreglo numpy
+        G_values = np.asarray(G(samples))
+
         # Calculamos el estadistico
-        candidate_D1 = Fe_samples[1:n-1] - G_values[1:n-1]
-        candidate_D2 = G_values[1:n-1] - Fe_samples[0:n-2]
+        candidate_D1 = Fe_plus - G_values
+        candidate_D2 = G_values - Fe_minus
+
         # D = d
         candidates_D = np.concatenate((candidate_D1, candidate_D2))
         d = np.max(candidates_D)
