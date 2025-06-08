@@ -90,3 +90,32 @@ class Printers:
                     dw=dim_width, gw=gen_width, tw=time_width
                 ))
             print("-" * total_width)
+    
+    @staticmethod
+    def print_testKS_results(rng:str, test_results:tuple[float, float], alpha:float):
+        """
+        Imprime los resultados de realizar el test de Kolmogorov-Smirnov
+
+        Args:
+            rng (str): Nombre del RNG
+            test_results (tuple[float, float]): Lista que contiene resultados como:
+            - Estadístico D
+            - p_valor
+            alpha (float): Número de rechazo
+        """
+        total_length = 70
+        title = f"🤝TEST DE KOLMOGOROV-SMIRNOV🔒 - {rng}"
+        dash_len = total_length - len(title)
+        dashes_left = dash_len // 2
+        dashes_right = dash_len - dashes_left
+        print("-" * dashes_left + title + "-" * dashes_right)
+        print()
+        print(f"🧐 D estadístico: {round(test_results[0], 4)}")
+        print(f"☝️ p-valor obtenido: {round(test_results[1], 4)}")
+        if test_results[1] > alpha:
+            print(f"😲☝️ Como {test_results[1]} > {alpha}:")
+            print("\t 😒 No hay evidencia suficiente para rechazar Ho")
+        else:
+            print(f"😲☝️ Como {test_results[1]} <= {alpha}:")
+            print(f"\t 🔴 Se rechaza Ho con una confianza del {100 * (1 - alpha)}%")
+        print("-" * total_length)
