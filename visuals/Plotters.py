@@ -6,11 +6,12 @@ from typing import List
 from rngs.RNG import RNG
 import matplotlib.pyplot as plt
 import seaborn as sns
+from constants import INTEGRAL_VAL_D1
 
 class Plotters:
 
     @staticmethod
-    def plot_timing_table(dimensional_results):
+    def timing_table(dimensional_results):
         """
         Grafica una comparación de tiempos de ejecución por generador para distintas dimensiones.
 
@@ -50,7 +51,7 @@ class Plotters:
         plt.rcdefaults()        # Restablece parámetros de matplotlib
 
     @staticmethod    
-    def plot_3D_generators(generators:List[RNG], Nsamples:int):
+    def generators_3D(generators:List[RNG], Nsamples:int):
         """
         Ploteo 3D de los tres generadores para chequear generación
         de Hiperplanos.
@@ -76,11 +77,11 @@ class Plotters:
         plt.tight_layout()
         plt.show()
 
-    def plot_3D_gaussian_estimation(Nsamples: int, rng: RNG) -> None:
+    def gaussian_estimation_3D(Nsamples: int, rng: RNG) -> None:
         """
         Ploteo 3D de la estimación con Monte Carlo de la integral
         de una función gaussiana de de dos variables en un 
-        cubo [0,1)x[0,1)x[0,1).
+        cubo [0,1)x[0,1).
 
         Args:
             Nsamples (int): numero de muestras uniformes por iteracion
@@ -110,5 +111,31 @@ class Plotters:
             ax.bar3d(x, y, 0, dx, dy, z, color='red', alpha=0.3)
 
         ax.view_init(elev=30, azim=60)
-        ax.set_title(f"Estimación de integral ≈ {integral_aprox:.4f}")
+        ax.set_title(rf"Estimación de Monte Carlo para $\mathcal{{I}}_{{2}}$ ≈ {integral_aprox:.4f}")
+        plt.show()
+
+    def gaussian_estimation_Ndim(Nsamples: int, rng: RNG, d: int) -> None:
+        """
+        Grafica para mostrar como la estimación de Monte Carlo de la
+        función gaussiana en un hipercubo de dimensión d estima de mejor
+        manera con mayor num de muestras.
+
+        Args:
+            Nsamples (int): numero de muestras uniformes.
+            rng (RNG): objeto de la clase RNG.
+            d (int): d (int): dimension del hipercubo para calcular la integral.
+        """
+        exact_value = INTEGRAL_VAL_D1 **d
+        integral_estims = MonteCarlo.get_integral_per_iteration(Nsamples=Nsamples, 
+                                                                g = Utils.gaussian_function,
+                                                                rng=rng)
+        integral_estims = np.array(integral_estims) **d
+
+        plt.plot(integral_estims, label=rf"Estimación de Monte Carlo para $\mathcal{{I}}_{d}$")
+        plt.axhline(exact_value, color='red', linestyle='--', label=f"Valor exacto {exact_value:.6f}")
+        plt.xlabel("Número de muestras")
+        plt.ylabel("Estimación de la integral")
+        plt.title("Estimación del método de Monte Carlo")
+        plt.legend()
+        plt.grid(True)
         plt.show()

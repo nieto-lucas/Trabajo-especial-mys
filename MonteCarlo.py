@@ -35,12 +35,14 @@ class MonteCarlo:
                                 rng: RNG,
                                 Nvars: int) -> List[Tuple[List[float], float]]:
         """
-        Método de MonteCarlo para Nvars-variable
+        Método que obtiene del metódo de Monte Carlo para Nvars-variable 
+        las uniformes generadas por iteración y el resultado de evaluar 
+        g(U_1, ..., U_Nvars). 
 
         Args:
             Nsamples (int): Número de muestras
             g (Callable[[ArrayLike], float]): Función a aplicar
-            rng: (RNG): objeto de la clase RNG
+            rng (RNG): objeto de la clase RNG
             Nvars (int): numero de variables a simular
 
         Returns:
@@ -56,3 +58,29 @@ class MonteCarlo:
             integral += parcial_result
             parcial_estims.append((uniforms, parcial_result))
         return parcial_estims
+
+    @staticmethod
+    def get_integral_per_iteration(Nsamples: int,
+                                   g: Callable[[float], float],
+                                   rng: RNG) -> List[float]:
+        """
+        Método que obtiene del método de Monte Carlo para una variable
+        el resultado de (g(U1)+...+g(Un))/n para cada n-esima iteración 
+        entre 1 y Nsamples. 
+        
+        Args:
+            Nsamples (int):
+            g (Callable[[float],float]): Función a aplicar
+            rng (RNG): objeto de la clase RNG.
+        
+        Returns:
+            List[float]: Lista con los resultados de los resultados de
+            (g(U1)+...+g(Un))/n para cada n-esima iteración.
+        """
+        integral_iter = []        
+        integral = 0
+        for n in range(Nsamples):
+            U = rng.rand01()
+            integral += g(U)
+            integral_iter.append(integral/(n+1))
+        return integral_iter
