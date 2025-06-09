@@ -1,5 +1,5 @@
 from constants import INTEGRAL_VAL_D2, INTEGRAL_VAL_D5, INTEGRAL_VAL_D10
-
+from typing import Tuple, Dict
 
 class Printers:
     """
@@ -7,7 +7,7 @@ class Printers:
     """
 
     @staticmethod
-    def print_estimations_table(rng_estimations: dict, real_value: float):
+    def print_estimations_table(rng_estimations, real_value: float) -> None:
         """
         Imprime en una tabla las estimaciones hechas por los RNGs, 
         incluyendo el error absoluto y el error relativo.
@@ -49,7 +49,8 @@ class Printers:
         print("-" * total_width + "\n")
 
     @staticmethod
-    def print_timing_table(dimensional_results, Nsim, Nsamples):
+    def print_timing_table(dimensional_results: Dict[str, Dict[str, float]], 
+                           Nsim: int, Nsamples: int) -> None:
         """
         Printear tabla de comparativa de tiempos para todas las dimensiones.
 
@@ -92,13 +93,63 @@ class Printers:
             print("-" * total_width)
     
     @staticmethod
-    def print_testKS_results(rng:str, test_results:tuple[float, float], alpha:float):
+    def print_stats_table(dimensional_results: Dict[str, Dict[str, Tuple[float, float]]], 
+                          Nsim: int, Nsamples: int) -> None:
+        """
+        Imprime tabla de medias y varianzas muestrales para diferentes dimensiones y tamaños de muestra.
+
+        Args:
+            dimensional_results (Dict[str,Dict[str,Tuple[float,float]]]): Diccionario con claves como 
+            "2 DIMENSIONES", "5 DIMENSIONES", etc. Cada valor es otro diccionario cuyas claves son 
+            tamaños de muestra (int) y cuyos valores son diccionarios con claves "media" y "varianza".
+            Nsim (int): Número de simulaciones realizadas.
+            Nsamples (int): Número de muestras por simulación
+        """
+        # Ajustes de formato
+        total_width = 78
+        dim_width = 15
+        gen_width = 20
+        mean_width = 15
+        var_width = 15
+
+        # Línea superior con info centrada
+        print("-" * total_width)
+        sim_info = f"{Nsim} simulaciones, {Nsamples} muestras"
+        padding = (total_width - len(sim_info)) // 2
+        print(" " * padding + sim_info)
+        print("-" * total_width)
+
+        # Encabezado
+        print("| {:^{dw}} | {:^{sw}} | {:^{mw}} | {:^{vw}} |".format(
+            "Dimensión", "Generador", "Media", "Varianza",
+            dw=dim_width, sw=gen_width, mw=mean_width, vw=var_width
+        ))
+        print("|" + "-" * (dim_width + 2) + "|" + "-" * (gen_width + 2) +
+            "|" + "-" * (mean_width + 2) + "|" + "-" * (var_width + 2) + "|")
+
+        # Filas
+        for dim, sample_dict in dimensional_results.items():
+            keys = list(sample_dict.keys())
+            middle_index = len(keys) // 2
+            for i, sample_size in enumerate(sorted(keys)):
+                stats = sample_dict[sample_size]
+                media = stats[0]
+                varianza = stats[1]
+                dim_str = dim if i == middle_index else ""
+                print("| {:^{dw}} | {:^{sw}} | {:^{mw}.6f} | {:^{vw}.6f} |".format(
+                    dim_str, sample_size, media, varianza,
+                    dw=dim_width, sw=gen_width, mw=mean_width, vw=var_width
+                ))
+            print("-" * total_width)
+
+    @staticmethod
+    def print_testKS_results(rng: str, test_results: Tuple[float, float], alpha: float) -> None:
         """
         Imprime los resultados de realizar el test de Kolmogorov-Smirnov
 
         Args:
             rng (str): Nombre del RNG
-            test_results (tuple[float, float]): Lista que contiene resultados como:
+            test_results (Tuple[float, float]): Lista que contiene resultados como:
             - Estadístico D
             - p_valor
             alpha (float): Número de rechazo
