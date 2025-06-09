@@ -1,4 +1,4 @@
-from typing import Dict, Tuple
+from typing import Dict, Tuple, List
 from Utils import Utils
 from rngs.Xorshift32 import Xorshift
 from rngs.MersenneTwister import MersenneTwister
@@ -25,9 +25,9 @@ class Compare:
             d (int): dimension del hipercubo para calcular la integral 
         
         Returns:
-            Dict[str,Tuple[float,float]]: entradas con (esperanza muestral, 
-            varianza muestral), donde las claves se corresponden a los nombres de las 
-            clases de rngs: LCG, Xorshift y MersenneTwister 
+            (dict): entradas donde las claves se corresponden a los nombres de 
+            las clases de rngs (str): LCG, Xorshift y MersenneTwister y el valor las
+            la media y varianza muestral de las estimaciones (Tuple[float,float]) 
         """
         # inicialización de los rngs
         rngs = {
@@ -63,9 +63,9 @@ class Compare:
             d (int): dimension del hipercubo para calcular la integral 
         
         Returns:
-            Dict[str,float]: entradas con errores cuadraticos medios, 
-            donde las claves se corresponden a los nombres de las clases de 
-            rngs: LCG, Xorshift y MersenneTwister 
+            (dict): entradas donde las claves se corresponden a los nombres de 
+            las clases de rngs (str): LCG, Xorshift y MersenneTwister y el valor los
+            errores cuadraticos medios entre estimaciones (float)  
         """
         # inicialización de los rngs
         rngs = {
@@ -101,9 +101,9 @@ class Compare:
             d (int): dimension del hipercubo para calcular la integral 
         
         Returns:
-            Dict[str,float]: entradas con errores cuadraticos medios, 
-            donde las claves se corresponden a los nombres de las clases de 
-            rngs: LCG, Xorshift y MersenneTwister 
+            (dict): entradas donde las claves se corresponden a los nombres de 
+            las clases de rngs (str): LCG, Xorshift y MersenneTwister y el valor los
+            tiempos de demora entre rngs (float)
         """
         # inicialización de los rngs
         rngs = {
@@ -121,5 +121,40 @@ class Compare:
                 times[name] = time
             return times
 
+        except Exception as e:
+            raise e
+        
+    @staticmethod
+    def gaussian_estimation_per_iter(Nsamples: int, seed: int, 
+                                    d: int = 1) -> Dict[str, List[float]]:
+        """
+        Metódo para comparar estimaciones con Monte Carlo de la integral de una 
+        función gaussiana en un hipercubo de dimensión d, por iteración y para todos 
+        los rngs: LCG, Xorshift, MersenneTwister
+
+        Args:
+            Nsamples (int): numero de muestras uniformes
+            seed (int): valor fijo para comparar generadores
+            d (int): dimension del hipercubo para calcular la integral
+        
+        Returns:
+            (dict): entradas donde las claves se corresponden a los nombres de 
+            las clases de rngs (str): LCG, Xorshift y MersenneTwister y el valor las
+            estimaciones por iteración (List[float]) 
+        """
+        rngs = {
+            "LCG": LCG(seed),
+            "Xorshift": Xorshift(seed),
+            "MersenneTwister": MersenneTwister(seed),
+        }
+        estimation_per_iter = {}
+
+        try:
+            for name, rng in rngs.items():
+                estimations = Utils.rng_gaussian_estimation_per_iter(Nsamples=Nsamples,
+                                                                    rng=rng, d=d)
+                estimation_per_iter[name] = estimations 
+            return estimation_per_iter   
+        
         except Exception as e:
             raise e

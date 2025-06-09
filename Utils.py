@@ -1,4 +1,4 @@
-from typing import Tuple
+from typing import Tuple, List
 import numpy as np
 from MonteCarlo import MonteCarlo
 from constants import INTEGRAL_VAL_D1
@@ -163,5 +163,34 @@ class Utils:
             end = time()
             return end - start
 
+        except Exception as e:
+            raise e
+        
+    @staticmethod
+    def rng_gaussian_estimation_per_iter(Nsamples: int, rng: RNG,
+                                        d: int = 1) -> List[float]:
+        """ 
+        Metódo para obtener el tiempo entre muestras de estimaciones con Monte Carlo 
+        de la integral de una función gaussiana en un hipercubo de dimensiones d, 
+        para algun rng
+
+        Args:
+            Nsamples (int): numero de muestras uniformes
+            rng (RNG): objeto de la clase RNG para obtener uniformes
+            d (int): dimension del hipercubo para calcular la integral 
+
+        Returns:
+            List[float]: estimaciones con Monte Carlo de la integral de una
+            función gaussiana por iteración. 
+        """
+        try:
+            estimation_per_iter = MonteCarlo.get_estimation_per_iter(
+                Nsamples=Nsamples,
+                g=Utils.gaussian_function,
+                rng=rng
+            )
+            estimation_per_iter = np.array(estimation_per_iter) ** d
+            return estimation_per_iter.tolist()
+        
         except Exception as e:
             raise e

@@ -2,14 +2,11 @@ from random import choice
 from MonteCarlo import MonteCarlo
 import numpy as np
 from Utils import Utils
-from typing import List, Dict, Tuple
+from typing import List, Dict
 from rngs.RNG import RNG
-from rngs.LCG import LCG
-from rngs.MersenneTwister import MersenneTwister
-from rngs.Xorshift32 import Xorshift
 import matplotlib.pyplot as plt
 import seaborn as sns
-from constants import INTEGRAL_VAL_D1, TWO_DIMENSIONS, TEN_DIMENSIONS, FIVE_DIMENSIONS
+from constants import INTEGRAL_VAL_D1
 
 class Plotters:
 
@@ -117,42 +114,43 @@ class Plotters:
         ax.set_title(rf"Estimación de Monte Carlo para $\mathcal{{I}}_{{2}}$ ≈ {integral_aprox:.4f}")
         plt.show()
 
-    def gaussian_estimation_Ndim(Nsamples: int, seed: int) -> None:
+    def gaussian_estimations_Ndim(dim_res: Dict[int, Dict[str, List[float]]]) -> None:
         """
         Grafica para mostrar como la estimación de Monte Carlo de la
         función gaussiana en un hipercubo de dimensión d estima de mejor
         manera con mayor num de muestras.
 
         Args:
-            Nsamples (int): numero de muestras uniformes.
-            seed (int): valor fijo para comparar generadores
+            dim_res (dict): Diccionario con clave dimensión (int), 
+            de valor un dict con clave generador (str) y con valor la lista 
+            de integrales por iteración del método de Monte Carlo para la función
+            gaussiana en un hipercubo de dim d (list[float]).
         """
 
-        rngs = {
-            "LCG": LCG(seed),
-            "Xorshift": Xorshift(seed),
-            "MersenneTwister": MersenneTwister(seed),
-        }
-        fig, axes = plt.subplots(1, 3, figsize=(18, 6), sharey=True)
+        rng_names = list(next(iter(dim_res.values())).keys())
+        dims = list(dim_res.keys())
+        color_map = {d: c for d, c in zip(dims, sns.color_palette("tab10", n_colors=len(dims)))}
 
-        for ax, (name, rng) in zip(axes, rngs.items()):
-            for d in [TWO_DIMENSIONS, FIVE_DIMENSIONS, TEN_DIMENSIONS]:
+        fig, axes = plt.subplots(1, len(rng_names), figsize=(6 * len(rng_names), 5), sharey=True)
+
+        if len(rng_names) == 1:
+            axes = [axes]
+
+        for ax, rng_name in zip(axes, rng_names):
+            for d in dims:
+                estimations = dim_res[d][rng_name]
                 exact_value = INTEGRAL_VAL_D1 ** d
-                integral_estims = MonteCarlo.get_integral_per_iteration(
-                    Nsamples=Nsamples,
-                    g=Utils.gaussian_function,
-                    rng=rng
-                )
-                integral_estims = np.array(integral_estims) ** d
-                ax.plot(integral_estims, label=rf"$d={d}$")
-                ax.axhline(exact_value, linestyle='--', color='red', linewidth=2)
+                color = color_map[d]
 
-            ax.set_title(f"RNG: {name}")
+                ax.plot(estimations, label=rf"$d={d}$", color=color)
+                ax.axhline(exact_value, linestyle="--", color=color, alpha=0.8, linewidth=1.2)
+
+            ax.set_title(f"RNG: {rng_name}")
             ax.set_xlabel("Número de muestras")
             ax.grid(True)
             ax.legend(title="Dimensión")
 
         axes[0].set_ylabel("Estimación de la integral")
-        fig.suptitle(f"Estimación de Monte Carlo con {Nsamples} muestras", fontsize=16)
+        fig.suptitle("Estimación de Monte Carlo por generador y dimensión", fontsize=16)
         fig.tight_layout(rect=[0, 0.03, 1, 0.95])
         plt.show()

@@ -60,9 +60,9 @@ class MonteCarlo:
         return parcial_estims
 
     @staticmethod
-    def get_integral_per_iteration(Nsamples: int,
-                                   g: Callable[[float], float],
-                                   rng: RNG) -> List[float]:
+    def get_estimation_per_iter(Nsamples: int,
+                                g: Callable[[float], float],
+                                rng: RNG) -> List[float]:
         """
         Método que obtiene del método de Monte Carlo para una variable
         el resultado de (g(U1)+...+g(Un))/n para cada n-esima iteración 
