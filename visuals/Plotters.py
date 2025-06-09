@@ -2,56 +2,121 @@ from random import choice
 from MonteCarlo import MonteCarlo
 import numpy as np
 from Utils import Utils
-from typing import List, Dict
+from typing import List, Dict, Optional, Callable
 from rngs.RNG import RNG
 import matplotlib.pyplot as plt
 import seaborn as sns
 from constants import INTEGRAL_VAL_D1
+from matplotlib.ticker import FuncFormatter
 
 class Plotters:
+    """ 
+    """
 
     @staticmethod
-    def timing_table(dimensional_results):
+    def _barplot_common(dim_res: Dict[int, Dict[str, float]],
+                        ylabel: str,
+                        title_prefix: str,
+                        bar_label_formatter: Optional[Callable[[float], str]] = None,
+                        yaxis_formatter: Optional[Callable[[float, int], str]] = None) -> None:
         """
-        Grafica una comparación de tiempos de ejecución por generador para distintas dimensiones.
+        Función general para hacer graficas de barras de resultados asociados a RNGs
+        agrupados por dimensión.
 
         Args:
-            dimensional_results (dict): Diccionario con el nombre de la dimensión como clave
-                                        y un dict de {generador: tiempo} como valor.
+            dim_res (dict): Diccionario con clave dimensión (int), 
+            de valor un dict con clave generador (str) y con valor (float) asociado
+            al RNG para esa dimensión. 
+            ylabel (str): comentario del eje 'y'
+            title_prefix (str): nombre global a los graficos de barras.
+            bar_label_formatter (Callable[[float], str]): agrega formato los datos de
+            cada barra.
+            yaxis_formatter (Callable[[float, int], str]): agrega formato al eje 'y'
         """
-        #Configuración del entorno inicial
         sns.set_theme()
-        pallete = sns.color_palette("rocket")
+        palette = sns.color_palette("rocket")
 
-        # Crear figura con un subplot por cada dimensión
-        fig, axes = plt.subplots(1, len(dimensional_results), figsize=(5 * len(dimensional_results), 5))
-
-        # Si solo hay un subplot, lo convertimos en lista para iterar consistentemente
-        if len(dimensional_results) == 1:
+        fig, axes = plt.subplots(1, len(dim_res), figsize=(5 * len(dim_res), 5))
+        if len(dim_res) == 1:
             axes = [axes]
 
-        for ax, (label, result) in zip(axes, dimensional_results.items()):
-            generadores = list(result.keys())
-            tiempos = list(result.values())
+        for ax, (label, result) in zip(axes, dim_res.items()):
+            labels = list(result.keys())
+            values = list(result.values())
+            color = choice(palette)
 
-            color = choice(pallete)
-
-            bars = sns.barplot(x=generadores, y=tiempos, ax=ax, color=color)
-            ax.set_title(f"Comparación de tiempos\n{label}")
-            ax.set_ylabel("Tiempo (s)")
+            bars = sns.barplot(x=labels, y=values, ax=ax, color=color)
+            ax.set_title(f"DIMENSIONES {label}")
             ax.set_xlabel("Generador")
-            ax.set_ylim(0, max(tiempos) * 1.2)
+            ax.set_ylabel(ylabel)
+            ax.set_ylim(0, max(values) * 1.2)
 
-            # Agregar etiquetas arriba de las barras
-            for container in bars.containers:
-                bars.bar_label(container, fmt='%.6f', label_type='edge', padding=3)
+            # Formateo del eje Y
+            if yaxis_formatter:
+                ax.yaxis.set_major_formatter(FuncFormatter(yaxis_formatter))
 
+            # Formateo de etiquetas arriba de las barras
+            if bar_label_formatter:
+                for container in bars.containers:
+                    labels = [bar_label_formatter(val) for val in container.datavalues]
+                    bars.bar_label(container, labels=labels, label_type='edge', padding=3)
+            else:
+                for container in bars.containers:
+                    bars.bar_label(container, fmt='%.6f', label_type='edge', padding=3)
+
+        fig.suptitle(f"{title_prefix}", fontsize=16)
         plt.tight_layout()
         plt.show()
-        plt.rcdefaults()        # Restablece parámetros de matplotlib
+        plt.rcdefaults()
+
+    @staticmethod
+    def time_bars(dim_res: Dict[int, Dict[str, float]]) -> None:
+        """ 
+        Grafica barras del tiempo de estimaciones de integral con Monte Carlo con 
+        varios RNGs agrupados por dimensión.
+
+        Args:
+            dim_res (dict): Diccionario con clave dimensión (int), 
+            de valor un dict con clave generador (str) y con valor tiempo de
+            demora de las esimaciones de Monte Carlo (float). 
+        """
+        Plotters._barplot_common(dim_res, 
+                                 ylabel="Tiempo (s)", 
+                                 title_prefix="Comparación de tiempos")
+
+    @staticmethod
+    def variance_bars(dim_res: Dict[int, Dict[str, List[float]]]) -> None:
+        """ 
+        Grafica barras de la varianza de estimaciones de integral con Monte Carlo con 
+        varios RNGs agrupados por dimensión.
+        
+        Args:
+            dim_res (dict): Diccionario con clave dimensión (int), 
+            de valor un dict con clave generador (str) y con valor varinza entre
+            estimaciones de Monte Carlo (float). 
+        """
+        Plotters._barplot_common(dim_res,
+                                ylabel="Varianza",
+                                title_prefix="Comparación de varianzas",
+                                yaxis_formatter=lambda x, _: f'{x:.1e}',
+                                bar_label_formatter=lambda x: f'{x:.1e}')
+
+    def cuadratic_error_bars(dim_res: Dict[int, Dict[str, List[float]]]) -> None:
+        """ 
+        Grafica barras del ECM de estimaciones de integral con Monte Carlo con 
+        varios RNGs agrupados por dimensión.
+        
+        Args:
+            dim_res (dict): Diccionario con clave dimensión (int), 
+            de valor un dict con clave generador (str) y con valor ECM entre
+            estimaciones de Monte Carlo (float).
+        """
+        Plotters._barplot_common(dim_res, 
+                                 ylabel="ECM", 
+                                 title_prefix="Comparación de error cuadratico medio (ECM)")
 
     @staticmethod    
-    def generators_3D(generators: List[RNG], Nsamples: int):
+    def generators_3D(generators: List[RNG], Nsamples: int) -> None:
         """
         Ploteo 3D de los tres generadores para chequear generación
         de Hiperplanos.
