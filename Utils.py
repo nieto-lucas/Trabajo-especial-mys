@@ -1,4 +1,4 @@
-from typing import Tuple, List
+from typing import Dict, List
 import numpy as np
 from MonteCarlo import MonteCarlo
 from constants import INTEGRAL_VAL_D1
@@ -64,7 +64,7 @@ class Utils:
 
     @staticmethod
     def rng_muestral_stat_estimation(Nsim: int, Nsamples: int, 
-                                     rng: RNG, d: int = 1) -> Tuple[float, float]:
+                                     rng: RNG, d: int = 1) -> Dict[str, float]:
         """
         Metódo para calcular la esperanza muestral y la varianza muestral 
         correjida entre muestras de estimaciones con Monte Carlo de la integral de 
@@ -85,9 +85,14 @@ class Utils:
             raise Exception("Error: la cantidad de simulaciones debe ser mayor a 0")
 
         try:
+            estims = []
+            exact_integral_val = INTEGRAL_VAL_D1**d 
+            cuadratic_error = 0
             media = Utils.rng_estimation_gaussian_in_hipercube(Nsamples=Nsamples,
                                                                 rng=rng,
                                                                 d=d)
+            cuadratic_error += (media - exact_integral_val)**2
+            estims.append(media)
             scuad, n = 0, 1
             # cada rng recolecta muestras
             while n < Nsim: 
@@ -98,44 +103,17 @@ class Utils:
                 media_ant = media
                 media = media_ant + (estim - media_ant) / n
                 scuad = scuad * (1 - 1 /(n-1)) + n*(media - media_ant)**2
-            return (media, scuad)
+                cuadratic_error += (estim - exact_integral_val)**2
+                estims.append(estim)
+            return {
+                "estimations": estims,
+                "media": media, 
+                "variance": scuad, 
+                "ECM": cuadratic_error /Nsim
+            }
         
         except Exception as e:
             raise e
-    
-    @staticmethod
-    def rng_cuadratic_error_estimation(Nsim: int, Nsamples: int, 
-                                        rng: RNG, d: int = 1) -> float:
-        """
-        Metódo para calcular el error cuadratico medio entre muestras de 
-        estimaciones con Monte Carlo de la integral de una función gaussiana 
-        en un hipercubo de dimensiones d, para algun rng
-
-        Args:
-            Nsim (int): numero de simulaciones de Monte Carlo
-            Nsamples (int): numero de muestras uniformes por iteracion
-            rng (RNG): objeto de la clase RNG para obtener uniformes
-            d (int): dimension del hipercubo para calcular la integral 
-
-        Returns:
-            float: Error cuadratico medio de la estimación respecto al resultado
-            exacto de la integral de la función gausiana en un hipercubo de dim d
-        """
-        if Nsim <= 0:
-            raise Exception("Error: la cantidad de simulaciones debe ser mayor a 0")
-
-        try:
-            exact_integral_val = INTEGRAL_VAL_D1**d 
-            cuadratic_error = 0
-            for _ in range(Nsim):
-                estim = Utils.rng_estimation_gaussian_in_hipercube(Nsamples=Nsamples, 
-                                                                    rng=rng, 
-                                                                    d=d)
-                cuadratic_error += (estim - exact_integral_val)**2
-            return cuadratic_error/ Nsim
-        
-        except Exception as e:
-            raise e 
         
     @staticmethod
     def rng_time_estimation(Nsim: int, Nsamples: int, 

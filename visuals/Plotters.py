@@ -85,23 +85,23 @@ class Plotters:
                                  title_prefix="Comparación de tiempos")
 
     @staticmethod
-    def variance_bars(dim_res: Dict[int, Dict[str, List[float]]]) -> None:
+    def variance_bars(dim_res: Dict[int, Dict[str, float]]) -> None:
         """ 
-        Grafica barras de la varianza de estimaciones de integral con Monte Carlo con 
-        varios RNGs agrupados por dimensión.
+        Grafica barras de la varianza muestrales de estimaciones de integral con 
+        Monte Carlo con varios RNGs agrupados por dimensión.
         
         Args:
             dim_res (dict): Diccionario con clave dimensión (int), 
-            de valor un dict con clave generador (str) y con valor varinza entre
-            estimaciones de Monte Carlo (float). 
+            de valor un dict con clave generador (str) y con valor varinza muestral
+            entre estimaciones de Monte Carlo (float). 
         """
         Plotters._barplot_common(dim_res,
-                                ylabel="Varianza",
-                                title_prefix="Comparación de varianzas",
+                                ylabel="Varianza muestral",
+                                title_prefix=r"Comparación de varianzas muestrales ($\mathcal{{S}}^2$)",
                                 yaxis_formatter=lambda x, _: f'{x:.1e}',
                                 bar_label_formatter=lambda x: f'{x:.1e}')
 
-    def cuadratic_error_bars(dim_res: Dict[int, Dict[str, List[float]]]) -> None:
+    def ecm_bars(dim_res: Dict[int, Dict[str, float]]) -> None:
         """ 
         Grafica barras del ECM de estimaciones de integral con Monte Carlo con 
         varios RNGs agrupados por dimensión.
@@ -112,8 +112,10 @@ class Plotters:
             estimaciones de Monte Carlo (float).
         """
         Plotters._barplot_common(dim_res, 
-                                 ylabel="ECM", 
-                                 title_prefix="Comparación de error cuadratico medio (ECM)")
+                                 ylabel=r"$\mathit{{ECM}}$", 
+                                 title_prefix=r"Comparación de error cuadratico medio ($\mathit{{ECM}}$)",
+                                 yaxis_formatter=lambda x, _: f'{x:.1e}',
+                                 bar_label_formatter=lambda x: f'{x:.1e}')
 
     @staticmethod    
     def generators_3D(generators: List[RNG], Nsamples: int) -> None:
@@ -218,4 +220,41 @@ class Plotters:
         axes[0].set_ylabel("Estimación de la integral")
         fig.suptitle("Estimación de Monte Carlo por generador y dimensión", fontsize=16)
         fig.tight_layout(rect=[0, 0.03, 1, 0.95])
+        plt.show()
+
+    @staticmethod
+    def histogram_plot_with_mean(dimensional_results: Dict[int, Dict[str, List[float]]], 
+                                 bins: int = 20) -> None:
+        """
+        """
+        sns.set_theme()
+        
+        dims = sorted(dimensional_results.keys())
+        gens = sorted({gen for dim in dims for gen in dimensional_results[dim]})
+        
+        n_rows = len(dims)
+        n_cols = len(gens)
+
+        fig, axes = plt.subplots(n_rows, n_cols, figsize=(5 * n_cols, 4 * n_rows), squeeze=False)
+
+        for i, dim in enumerate(dims):
+            for j, gen in enumerate(gens):
+                ax = axes[i][j]
+                values = dimensional_results[dim].get(gen)
+
+                if values is None:
+                    ax.axis('off')
+                    continue
+
+                mean_val = np.mean(values)
+
+                sns.histplot(values, bins=bins, kde=False, ax=ax, color="skyblue", edgecolor="black")
+                ax.axvline(mean_val, color='red', linestyle='--', label=f'Media = {mean_val:.4f}')
+                ax.set_title(f'Dim: {dim}, Gen: {gen}')
+                ax.set_xlabel("Estimaciones")
+                ax.set_ylabel("Frecuencia")
+                ax.legend()
+
+        fig.suptitle("Histogramas de estimaciones de Monte Carlo", fontsize=16)
+        plt.tight_layout()
         plt.show()

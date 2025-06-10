@@ -12,7 +12,7 @@ class Compare:
 
     @staticmethod
     def muestral_stats(Nsim: int, Nsamples: int, 
-                        seed: int, d: int = 1) -> Dict[str, Tuple[float, float]]:
+                        seed: int, d: int = 1) -> Dict[str, Dict[str, float]]:
         """
         Metódo para comparar varianza entre muestras de estimaciones con Monte Carlo
         de la integral de una función gaussiana en un hipercubo de dimensiones d,
@@ -45,44 +45,6 @@ class Compare:
                 muestral_stats[name] = muestral_result
             return muestral_stats
         
-        except Exception as e:
-            raise e
-
-    @staticmethod
-    def cuadratic_error(Nsamples: int, Nsim: int, 
-                        seed: int, d: int = 1) -> Dict[str, float]:
-        """
-        Metódo para comparar varianza entre muestras de estimaciones con Monte Carlo
-        de la integral de una función gaussiana en un hipercubo de dimensión d,
-        para todos los rngs: LCG, Xorshift, MersenneTwister
-
-        Args:
-            Nsim (int): numero de simulaciones de Monte Carlo
-            Nsamples (int): numero de muestras uniformes por iteracion
-            seed (int): valor fijo para comparar generadores
-            d (int): dimension del hipercubo para calcular la integral 
-        
-        Returns:
-            (dict): entradas donde las claves se corresponden a los nombres de 
-            las clases de rngs (str): LCG, Xorshift y MersenneTwister y el valor los
-            errores cuadraticos medios entre estimaciones (float)  
-        """
-        # inicialización de los rngs
-        rngs = {
-            "LCG": LCG(seed),
-            "Xorshift": Xorshift(seed),
-            "MersenneTwister": MersenneTwister(seed),
-        }
-        cuadratic_errors = {}
-
-        try:
-            for name, rng in rngs.items():
-                cuadratic_error = Utils.rng_cuadratic_error_estimation(Nsim=Nsim,
-                                                                    Nsamples=Nsamples,
-                                                                    rng=rng, d=d) 
-                cuadratic_errors[name] = cuadratic_error
-            return cuadratic_errors
-
         except Exception as e:
             raise e
         

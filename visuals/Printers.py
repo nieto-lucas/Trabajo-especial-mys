@@ -93,7 +93,7 @@ class Printers:
             print("-" * total_width)
     
     @staticmethod
-    def print_stats_table(dimensional_results: Dict[str, Dict[str, Tuple[float, float]]], 
+    def print_stats_table(dimensional_results: Dict[str, Dict[str, Dict[str, float]]], 
                           Nsim: int, Nsamples: int) -> None:
         """
         Imprime tabla de medias y varianzas muestrales para diferentes dimensiones y tamaños de muestra.
@@ -106,11 +106,12 @@ class Printers:
             Nsamples (int): Número de muestras por simulación
         """
         # Ajustes de formato
-        total_width = 78
+        total_width = 96
         dim_width = 15
         gen_width = 20
         mean_width = 15
         var_width = 15
+        ecm_width = 15
 
         # Línea superior con info centrada
         print("-" * total_width)
@@ -120,12 +121,13 @@ class Printers:
         print("-" * total_width)
 
         # Encabezado
-        print("| {:^{dw}} | {:^{sw}} | {:^{mw}} | {:^{vw}} |".format(
-            "Dimensión", "Generador", "Media", "Varianza",
-            dw=dim_width, sw=gen_width, mw=mean_width, vw=var_width
+        print("| {:^{dw}} | {:^{sw}} | {:^{mw}} | {:^{vw}} | {:^{ew}} |".format(
+            "Dimensión", "Generador", "Media", "Varianza", "ECM",
+            dw=dim_width, sw=gen_width, mw=mean_width, vw=var_width, ew=ecm_width
         ))
         print("|" + "-" * (dim_width + 2) + "|" + "-" * (gen_width + 2) +
-            "|" + "-" * (mean_width + 2) + "|" + "-" * (var_width + 2) + "|")
+            "|" + "-" * (mean_width + 2) + "|" + "-" * (var_width + 2) +
+            "|" + "-" * (ecm_width + 2) + "|")
 
         # Filas
         for dim, sample_dict in dimensional_results.items():
@@ -133,12 +135,13 @@ class Printers:
             middle_index = len(keys) // 2
             for i, sample_size in enumerate(sorted(keys)):
                 stats = sample_dict[sample_size]
-                media = stats[0]
-                varianza = stats[1]
+                media = stats["media"]
+                varianza = stats["variance"]
+                ecm = stats["ECM"]
                 dim_str = dim if i == middle_index else ""
-                print("| {:^{dw}} | {:^{sw}} | {:^{mw}.6f} | {:^{vw}.6f} |".format(
-                    dim_str, sample_size, media, varianza,
-                    dw=dim_width, sw=gen_width, mw=mean_width, vw=var_width
+                print("| {:^{dw}} | {:^{sw}} | {:^{mw}.6f} | {:^{vw}.6f} | {:^{ew}.6f} |".format(
+                    dim_str, sample_size, media, varianza, ecm,
+                    dw=dim_width, sw=gen_width, mw=mean_width, vw=var_width, ew=ecm_width
                 ))
             print("-" * total_width)
 
