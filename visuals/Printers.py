@@ -172,4 +172,24 @@ class Printers:
         else:
             print(f"😲☝️ Como {test_results[1]} <= {alpha}:")
             print(f"\t 🔴 Se rechaza Ho con una confianza del {100 * (1 - alpha)}%")
-        print("-" * total_length)
+
+    def print_testKS_scipy(rng:str, test_results: Tuple[float, float], alpha:float):
+        """
+        Imprime los resultados de realizar el test de Kolmogorov-Smirnov con scypi
+
+        Args:
+            rng (str): Nombre del RNG
+            test_results (Tuple[float, float]): Lista que contiene resultados como:
+            - Estadístico D
+            - p_valor
+            alpha (float): Número de rechazo
+        """
+        print("\n---- (SCIPY🐍) ----\n")
+        print(f"🧐 D estadístico: {round(test_results[0], 4)}")
+        print(f"☝️ p-valor obtenido: {round(test_results[1], 4)}")
+        if test_results[1] > alpha:
+            print(f"😲☝️ Como {test_results[1]} > {alpha}:")
+            print("\t 😒 No hay evidencia suficiente para rechazar Ho")
+        else:
+            print(f"😲☝️ Como {test_results[1]} <= {alpha}:")
+            print(f"\t 🔴 Se rechaza Ho con una confianza del {100 * (1 - alpha)}%")
