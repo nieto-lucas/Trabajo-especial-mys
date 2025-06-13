@@ -1,7 +1,7 @@
 import numpy as np
 from numpy.typing import ArrayLike
 from random import random
-from scipy import stats
+from scipy.stats import kstest, uniform
 from tests.TestHelpers import TestHelpers
 from visuals.Printers import Printers
 
@@ -32,7 +32,7 @@ class Test:
         d = TestHelpers.KS_statistic(
                 Nsamples=Nsamples,
                 samples=samples,
-                G=stats.uniform.cdf)
+                G=uniform.cdf)
 
         #Estimación del p_valor
         value_p = 0
@@ -53,3 +53,18 @@ class Test:
             rng=rng_name,
             test_results=(d, value_p),
             alpha=0.05)
+
+    def test_KS_scipy(rng_name:str, samples:ArrayLike):
+        """
+        Test de Kolmogorov_Smirnov con H0: "las muestras generadas por rng
+        son uniformes en [0, 1]" y confianza de 95%. Utilizando scipy
+
+        Args:
+            rng_name (str): Nombre del generador
+            samples (ArrayLike): Muestras
+            Nsim (int): Número de simulaciones
+        """
+        scipy_results = kstest(samples, cdf="uniform")[:2]
+        D = scipy_results[0]
+        value_p = scipy_results[1]
+        Printers.print_testKS_scipy(rng=rng_name, test_results=(D, value_p), alpha=0.05)
