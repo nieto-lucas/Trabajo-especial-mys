@@ -18,7 +18,6 @@ class Test:
         son uniformes en [0, 1]" y confianza de 95%.
 
         Args:
-            Nsamples (int): numero de muestras por iteracion
             rng (RNG): objeto de la clase RNG para obtener muestras
             Nsim (int): numero de simulaciones para estimar el p-valor
         """
@@ -62,7 +61,6 @@ class Test:
         Args:
             rng_name (str): Nombre del generador
             samples (ArrayLike): Muestras
-            Nsim (int): Número de simulaciones
         """
         scipy_results = kstest(samples, cdf="uniform")[:2]
         D = scipy_results[0]

@@ -49,14 +49,12 @@ class Printers:
         print("-" * total_width + "\n")
 
     @staticmethod
-    def print_timing_table(dimensional_results: Dict[str, Dict[str, float]], 
-                           Nsim: int, Nsamples: int) -> None:
+    def print_timing_table(dimensional_results: Dict[str, Dict[str, float]], Nsamples: int) -> None:
         """
         Printear tabla de comparativa de tiempos para todas las dimensiones.
 
         Args:
             dimensional_results: Diccionario de resultados para las distintas dimensiones.
-            Nsim (int): Número de simulaciones realizadas.
             Nsamples (int): Número de muestras por simulación.
         """
         # Ajustes de formato
@@ -67,7 +65,7 @@ class Printers:
 
         # Línea superior con info centrada
         print("-" * total_width)
-        sim_info = f"{Nsim} simulaciones, {Nsamples} muestras"
+        sim_info = f"{Nsamples} muestras"
         padding = (total_width - len(sim_info)) // 2
         print(" " * padding + sim_info)
         print("-" * total_width)
@@ -93,8 +91,7 @@ class Printers:
             print("-" * total_width)
     
     @staticmethod
-    def print_stats_table(dimensional_results: Dict[str, Dict[str, Dict[str, float]]], 
-                          Nsim: int, Nsamples: int) -> None:
+    def print_stats_table(dimensional_results: Dict[str, Dict[str, Dict[str, float]]], Nsamples: int) -> None:
         """
         Imprime tabla de medias y varianzas muestrales para diferentes dimensiones y tamaños de muestra.
 
@@ -102,7 +99,6 @@ class Printers:
             dimensional_results (Dict[str,Dict[str,Tuple[float,float]]]): Diccionario con claves como 
             "2 DIMENSIONES", "5 DIMENSIONES", etc. Cada valor es otro diccionario cuyas claves son 
             tamaños de muestra (int) y cuyos valores son diccionarios con claves "media" y "varianza".
-            Nsim (int): Número de simulaciones realizadas.
             Nsamples (int): Número de muestras por simulación
         """
         # Ajustes de formato
@@ -115,7 +111,7 @@ class Printers:
 
         # Línea superior con info centrada
         print("-" * total_width)
-        sim_info = f"{Nsim} simulaciones, {Nsamples} muestras"
+        sim_info = f"{Nsamples} muestras"
         padding = (total_width - len(sim_info)) // 2
         print(" " * padding + sim_info)
         print("-" * total_width)
@@ -135,7 +131,7 @@ class Printers:
             middle_index = len(keys) // 2
             for i, sample_size in enumerate(sorted(keys)):
                 stats = sample_dict[sample_size]
-                media = stats["media"]
+                media = stats["mean"]
                 varianza = stats["variance"]
                 ecm = stats["ECM"]
                 dim_str = dim if i == middle_index else ""
