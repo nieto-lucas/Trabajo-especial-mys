@@ -59,6 +59,7 @@ class Utils:
                                 Nvars=d,
                                 rng=rng,
                                 g=Utils.gaussian_func_multivar)
+        var /= Nsamples
         ecm = var + (mean - INTEGRAL_VAL_D1 ** d) ** 2
         results = {
             "variance": var,

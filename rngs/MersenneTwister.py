@@ -33,10 +33,10 @@ class MersenneTwister(RNG):
         self.index = self.MT_STATE_SIZE
         self.seed(seed_value)
 
-    def seed(self, num):
+    def seed(self, seed):
         """Inicializa el generador con una semilla"""
-        num &= 0xFFFFFFFF # Asegurar 32 bits
-        self._mt[0] = num
+        seed &= 0xFFFFFFFF # Asegurar 32 bits
+        self._mt[0] = seed
         self.index = self.MT_STATE_SIZE
         for i in range(1, self.MT_STATE_SIZE):
             temp = self.KNUTH_MULTIPLIER * (self._mt[i - 1] ^ (self._mt[i - 1] >> (self.BIT_WIDTH - 2))) + i
