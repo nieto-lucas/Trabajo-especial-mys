@@ -1,5 +1,4 @@
 from .RNG import RNG
-
 class MersenneTwister(RNG):
     
     '''

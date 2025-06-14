@@ -1,5 +1,5 @@
 from typing import Dict, Tuple, List
-from Utils import Utils
+from Utils import Utils 
 from rngs.Xorshift32 import Xorshift
 from rngs.MersenneTwister import MersenneTwister
 from rngs.LCG import LCG
@@ -11,15 +11,13 @@ class Compare:
     """
 
     @staticmethod
-    def muestral_stats(Nsim: int, Nsamples: int, 
-                        seed: int, d: int = 1) -> Dict[str, Dict[str, float]]:
+    def muestral_stats(Nsamples: int, seed: int, d: int = 1) -> Dict[str, Dict[str, float]]:
         """
         Metódo para comparar varianza entre muestras de estimaciones con Monte Carlo
         de la integral de una función gaussiana en un hipercubo de dimensiones d,
         para todos los rngs: LCG, Xorshift, MersenneTwister
 
         Args:
-            Nsim (int): numero de simulaciones de Monte Carlo
             Nsamples (int): numero de muestras uniformes por iteracion
             seed (int): valor fijo para comparar generadores
             d (int): dimension del hipercubo para calcular la integral 
@@ -39,9 +37,10 @@ class Compare:
         
         try:
             for name, rng in rngs.items():
-                muestral_result = Utils.rng_muestral_stat_estimation(Nsim=Nsim,
-                                                                    Nsamples=Nsamples,
-                                                                    rng=rng, d=d)
+                muestral_result = Utils.rng_muestral_stats_estimation_hipercube(
+                                        Nsamples=Nsamples,
+                                        rng=rng,
+                                        d=d) 
                 muestral_stats[name] = muestral_result
             return muestral_stats
         
@@ -49,15 +48,13 @@ class Compare:
             raise e
         
     @staticmethod
-    def time(Nsamples: int, Nsim: int, 
-            seed: int, d: int = 1) -> Dict[str, float]: 
+    def time(Nsamples: int, seed: int, d: int = 1) -> Dict[str, float]: 
         """
         Metódo para comparar tiempo entre muestras de estimaciones con Monte Carlo
         de la integral de una función gaussiana en un hipercubo de dimensión d,
         para todos los rngs: LCG, Xorshift, MersenneTwister
 
         Args:
-            Nsim (int): numero de simulaciones de Monte Carlo
             Nsamples (int): numero de muestras uniformes por iteracion
             seed (int): valor fijo para comparar generadores
             d (int): dimension del hipercubo para calcular la integral 
@@ -77,9 +74,7 @@ class Compare:
 
         try:
             for name, rng in rngs.items():
-                time = Utils.rng_time_estimation(Nsamples=Nsamples,
-                                                Nsim=Nsim,
-                                                rng=rng, d=d)
+                time = Utils.rng_time_estimation(Nsamples=Nsamples, rng=rng, d=d)
                 times[name] = time
             return times
 

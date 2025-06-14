@@ -11,20 +11,6 @@ class Utils:
     """
     
     @staticmethod
-    def gaussian_function(x: float) -> float:
-        """
-        Función que se usa para estimar el valor de la integral con metódo
-        de Monte Carlo.
-
-        Args:
-            x(float): valor con el que se inicializa la función gaussiana 
-        
-        Returns: 
-            float: retorna el valor de la función gaussiana valuada en x
-        """
-        return np.e**(-x**2)
-    
-    @staticmethod
     def gaussian_func_multivar(Xs: np.ndarray) -> float:
         """
         Función multivariable que se usa para estimar el valor de la integral 
@@ -56,88 +42,51 @@ class Utils:
         if d < 1:
             raise Exception("Error: la dimensión debe ser mayor a 1")
         
-        estimation = MonteCarlo.method(Nsamples=Nsamples, 
-                                      g=Utils.gaussian_function,
-                                      rng=rng
-                                      ) ** d
+        estimation = MonteCarlo.method(
+                            Nsamples=Nsamples, 
+                            g=Utils.gaussian_func_multivar,
+                            rng=rng,
+                            Nvars=d)
         return estimation
 
     @staticmethod
-    def rng_muestral_stat_estimation(Nsim: int, Nsamples: int, 
-                                     rng: RNG, d: int = 1) -> Dict[str, float]:
-        """
-        Metódo para calcular la esperanza muestral y la varianza muestral 
-        correjida entre muestras de estimaciones con Monte Carlo de la integral de 
-        una función gaussiana en un hipercubo de dimensiones d, para algun rng
-
-        Args:
-            Nsim (int): numero de simulaciones de Monte Carlo
-            Nsamples (int): numero de muestras uniformes por iteracion
-            rng (RNG): objeto de la clase RNG para obtener uniformes
-            d (int): dimension del hipercubo para calcular la integral
-
-        Returns:
-            Tuple[float,float]: (esperanza muestral, varianza muestral) de la 
-            estimación respecto al resultado exacto de la integral de la función 
-            gausiana en un hipercubo de dim d
-        """
-        if Nsim <= 0:
-            raise Exception("Error: la cantidad de simulaciones debe ser mayor a 0")
-
-        try:
-            estims = []
-            exact_integral_val = INTEGRAL_VAL_D1**d 
-            cuadratic_error = 0
-            media = Utils.rng_estimation_gaussian_in_hipercube(Nsamples=Nsamples,
-                                                                rng=rng,
-                                                                d=d)
-            cuadratic_error += (media - exact_integral_val)**2
-            estims.append(media)
-            scuad, n = 0, 1
-            # cada rng recolecta muestras
-            while n < Nsim: 
-                n += 1
-                estim = Utils.rng_estimation_gaussian_in_hipercube(Nsamples=Nsamples, 
-                                                                    rng=rng, 
-                                                                    d=d)
-                media_ant = media
-                media = media_ant + (estim - media_ant) / n
-                scuad = scuad * (1 - 1 /(n-1)) + n*(media - media_ant)**2
-                cuadratic_error += (estim - exact_integral_val)**2
-                estims.append(estim)
-            return {
-                "estimations": estims,
-                "media": media, 
-                "variance": scuad, 
-                "ECM": cuadratic_error /Nsim
-            }
+    def rng_muestral_stats_estimation_hipercube(Nsamples: int, rng: RNG, d: int = 1) -> float:
+        if d < 1:
+            raise Exception("Error: la dimensión debe ser mayor a 1")
         
-        except Exception as e:
-            raise e
-        
+        var, mean = MonteCarlo.get_muestral_stats(
+                                Nsamples=Nsamples,
+                                Nvars=d,
+                                rng=rng,
+                                g=Utils.gaussian_func_multivar)
+        ecm = var + (mean - INTEGRAL_VAL_D1 ** d) ** 2
+        results = {
+            "variance": var,
+            "mean": mean,
+            "ECM": ecm
+        }
+        return results
+
     @staticmethod
-    def rng_time_estimation(Nsim: int, Nsamples: int, 
-                            rng: RNG, d: int = 1) -> float:
+    def rng_time_estimation(Nsamples: int, rng: RNG, d: int = 1) -> float:
         """
         Metódo para obtener el tiempo entre muestras de estimaciones con Monte Carlo 
         de la integral de una función gaussiana en un hipercubo de dimensiones d, 
         para algun rng
 
         Args:
-            Nsim (int): numero de simulaciones de Monte Carlo
             Nsamples (int): numero de muestras uniformes por iteracion
             rng (RNG): objeto de la clase RNG para obtener uniformes
             d (int): dimension del hipercubo para calcular la integral 
 
         Returns:
-            float: tiempo de demora de Nsim-estimaciones de la integral
+            float: tiempo de demora de estimar la integral
         """
         try:
             start = time()
-            for _ in range(Nsim):
-                Utils.rng_estimation_gaussian_in_hipercube(Nsamples=Nsamples,
-                                                            rng=rng, 
-                                                            d=d)
+            Utils.rng_estimation_gaussian_in_hipercube(Nsamples=Nsamples,
+                                                rng=rng, 
+                                                d=d)
             end = time()
             return end - start
 
