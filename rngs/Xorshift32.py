@@ -5,6 +5,9 @@ class Xorshift(RNG):
     def __init__(self, seed: int = int(time())):
         super().__init__(seed)
 
+    def seed(self, seed:int):
+        self.seed = seed
+
     def next(self) -> int:
         """
         Metódo que implementa el siguiente número de la secuencia en un

@@ -12,6 +12,17 @@ class RNG(ABC):
         self._seed = seed
     
     @abstractmethod
+    def seed(self, seed:int):
+        """
+        Inicializa el valor de la seed para un generador
+
+        Args:
+            seed (int): seed a cambiar
+        """
+        pass
+
+
+    @abstractmethod
     def next(self) -> int:
         pass
 

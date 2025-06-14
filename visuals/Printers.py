@@ -24,7 +24,7 @@ class Printers:
         else:
             label = "10 DIMENSIONES"
 
-        total_width = 97
+        total_width = 96
         padding = (total_width - len(label)) // 2
         print("-" * padding + label + "-" * (total_width - padding - len(label)))
 
@@ -102,12 +102,12 @@ class Printers:
             Nsamples (int): Número de muestras por simulación
         """
         # Ajustes de formato
-        total_width = 96
-        dim_width = 15
+        total_width = 121
+        dim_width = 10
         gen_width = 20
-        mean_width = 15
-        var_width = 15
-        ecm_width = 15
+        mean_width = 25
+        var_width = 25
+        ecm_width = 25
 
         # Línea superior con info centrada
         print("-" * total_width)
@@ -118,7 +118,7 @@ class Printers:
 
         # Encabezado
         print("| {:^{dw}} | {:^{sw}} | {:^{mw}} | {:^{vw}} | {:^{ew}} |".format(
-            "Dimensión", "Generador", "Media", "Varianza", "ECM",
+            "Dimensión", "Generador", "Media", "Varianza", "ECM", 
             dw=dim_width, sw=gen_width, mw=mean_width, vw=var_width, ew=ecm_width
         ))
         print("|" + "-" * (dim_width + 2) + "|" + "-" * (gen_width + 2) +
@@ -135,7 +135,7 @@ class Printers:
                 varianza = stats["variance"]
                 ecm = stats["ECM"]
                 dim_str = dim if i == middle_index else ""
-                print("| {:^{dw}} | {:^{sw}} | {:^{mw}.6f} | {:^{vw}.6f} | {:^{ew}.6f} |".format(
+                print("| {:^{dw}} | {:^{sw}} | {:^{mw}.10f} | {:^{vw}.10f} | {:^{ew}.10f} |".format(
                     dim_str, sample_size, media, varianza, ecm,
                     dw=dim_width, sw=gen_width, mw=mean_width, vw=var_width, ew=ecm_width
                 ))

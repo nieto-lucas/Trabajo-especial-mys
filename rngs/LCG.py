@@ -12,6 +12,10 @@ class LCG(RNG):
         self._c = LCG_C
         self._m = LCG_M
 
+    def seed(self, seed:int) -> None:
+        self.seed = seed
+
+
     def next(self) -> int:
         """
         Metódo que implementa el siguiente número de la secuencia en un
