@@ -88,17 +88,17 @@ class Plotters:
     @staticmethod
     def variance_bars(dim_res: Dict[int, Dict[str, float]]) -> None:
         """ 
-        Grafica barras de la varianza muestrales de estimaciones de integral con 
+        Grafica barras de la varianza de estimaciones de integral con 
         Monte Carlo con varios RNGs agrupados por dimensión.
         
         Args:
             dim_res (dict): Diccionario con clave dimensión (int), 
-            de valor un dict con clave generador (str) y con valor varinza muestral
+            de valor un dict con clave generador (str) y con valor varianza
             entre estimaciones de Monte Carlo (float). 
         """
         Plotters._barplot_common(dim_res,
-                    ylabel="Varianza muestral",
-                    title_prefix=r"Comparación de varianzas muestrales ($\mathcal{{S}}^2$)",
+                    ylabel="Varianza",
+                    title_prefix=r"Comparación de varianzas($\mathcal{{S}}^2$)",
                     yaxis_formatter=lambda x, _: f'{x:.1e}',
                     bar_label_formatter=lambda x: f'{x:.1e}')
 
