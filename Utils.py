@@ -49,8 +49,24 @@ class Utils:
                             Nvars=d)
         return estimation
 
+
     @staticmethod
     def rng_muestral_stats_estimation_hipercube(Nsamples: int, rng: RNG, d: int = 1) -> float:
+        """
+        Método para obtener la varianza, media y ECM de las estimaciones por método
+        de Monte Carlo.
+
+        Args:
+            Nsamples (int): Número de Muestras
+            rng (RNG): Generador
+            d (int, optional): Dimensión. Por defecto en 1.
+
+        Raises:
+            Exception: Si la dimensión es menor a 1, se levanta una excepción.
+
+        Returns:
+            float: Un diccionario con la varianza, media y ECM
+        """
         if d < 1:
             raise Exception("Error: la dimensión debe ser mayor a 1")
         

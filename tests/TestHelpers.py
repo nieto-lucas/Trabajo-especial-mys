@@ -10,7 +10,7 @@ class TestHelpers:
     @staticmethod
     def KS_statistic(Nsamples:int, samples: ArrayLike, G: Callable[[ArrayLike], ArrayLike]) -> float:
         """
-        Estadistico de Kolmogorov-Smirnov para una muestra
+        Estadistico de Kolmogorov-Smirnov para una determinada cantidad de muestras
 
         Args:
             samples (ArrayLike): muestras que se reciben para el estadistico

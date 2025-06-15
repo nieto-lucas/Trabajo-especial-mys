@@ -10,7 +10,8 @@ from constants import INTEGRAL_VAL_D1
 from matplotlib.ticker import FuncFormatter
 
 class Plotters:
-    """ 
+    """
+    Clase con funciones para graficar resultados
     """
 
     @staticmethod
@@ -81,8 +82,8 @@ class Plotters:
             demora de las esimaciones de Monte Carlo (float). 
         """
         Plotters._barplot_common(dim_res, 
-                                 ylabel="Tiempo (s)", 
-                                 title_prefix="Comparación de tiempos")
+                    ylabel="Tiempo (s)", 
+                    title_prefix="Comparación de tiempos")
 
     @staticmethod
     def variance_bars(dim_res: Dict[int, Dict[str, float]]) -> None:
@@ -96,10 +97,10 @@ class Plotters:
             entre estimaciones de Monte Carlo (float). 
         """
         Plotters._barplot_common(dim_res,
-                                ylabel="Varianza muestral",
-                                title_prefix=r"Comparación de varianzas muestrales ($\mathcal{{S}}^2$)",
-                                yaxis_formatter=lambda x, _: f'{x:.1e}',
-                                bar_label_formatter=lambda x: f'{x:.1e}')
+                    ylabel="Varianza muestral",
+                    title_prefix=r"Comparación de varianzas muestrales ($\mathcal{{S}}^2$)",
+                    yaxis_formatter=lambda x, _: f'{x:.1e}',
+                    bar_label_formatter=lambda x: f'{x:.1e}')
 
     def ecm_bars(dim_res: Dict[int, Dict[str, float]]) -> None:
         """ 
@@ -112,10 +113,10 @@ class Plotters:
             estimaciones de Monte Carlo (float).
         """
         Plotters._barplot_common(dim_res, 
-                                 ylabel=r"$\mathit{{ECM}}$", 
-                                 title_prefix=r"Comparación de error cuadratico medio ($\mathit{{ECM}}$)",
-                                 yaxis_formatter=lambda x, _: f'{x:.1e}',
-                                 bar_label_formatter=lambda x: f'{x:.1e}')
+                    ylabel=r"$\mathit{{ECM}}$", 
+                    title_prefix=r"Comparación de error cuadratico medio ($\mathit{{ECM}}$)",
+                    yaxis_formatter=lambda x, _: f'{x:.1e}',
+                    bar_label_formatter=lambda x: f'{x:.1e}')
 
     @staticmethod    
     def generators_3D(generators: List[RNG], Nsamples: int) -> None:
@@ -155,9 +156,9 @@ class Plotters:
             rng (RNG): objeto de la clase RNG para obtener uniformes
         """
         samples = MonteCarlo.get_parcials_method_Nvars(Nsamples=Nsamples, 
-                                                  g=Utils.gaussian_func_multivar, 
-                                                  rng=rng, 
-                                                  Nvars=2)
+                                g=Utils.gaussian_func_multivar, 
+                                rng=rng, 
+                                Nvars=2)
         samples_array = np.array(samples, dtype=object)
         coords = np.stack(samples_array[:, 0])
         z_samples = np.array(samples_array[:, 1], dtype=float)
@@ -179,7 +180,7 @@ class Plotters:
 
         ax.view_init(elev=30, azim=60)
         ax.set_title(rf"Estimación de Monte Carlo para $\mathcal{{I}}_{{2}}$ ≈ {integral_aprox:.4f}"
-                     f"\nRNG: {rng.name()}")
+                    f"\nRNG: {rng.name()}")
         plt.show()
 
     def gaussian_estimations_Ndim(dim_res: Dict[int, Dict[str, List[float]]]) -> None:

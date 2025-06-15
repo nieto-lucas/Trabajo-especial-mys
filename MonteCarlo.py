@@ -90,7 +90,20 @@ class MonteCarlo:
 
     def get_muestral_stats(Nsamples:int,  Nvars:int,
                 rng:RNG, g:Callable[[float], float]) -> Tuple[float, float]:
+        """
+        Calcula a través del método de Monte Carlo la varianza entre muestras de las 
+        estimaciones de la integral y la media de forma recursiva.
 
+        Args:
+            Nsamples (int): Número de muestras.
+            Nvars (int): Número de variables (dimensión)
+            rng (RNG): Generador
+            g (Callable[[float], float]): Función G a aplicar
+
+        Returns:
+            Tuple[float, float]: Tupla con la varianza y la media de los valores
+            de las estimaciones.
+        """
         U_1 = np.array([rng.rand01() for _ in range(Nvars)])
         media = g(U_1)
         scuad, n = 0, 1
