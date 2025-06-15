@@ -114,10 +114,11 @@ class Utils:
         try:
             estimation_per_iter = MonteCarlo.get_estimation_per_iter(
                 Nsamples=Nsamples,
-                g=Utils.gaussian_function,
-                rng=rng
+                g=Utils.gaussian_func_multivar,
+                rng=rng,
+                Nvars=d
             )
-            estimation_per_iter = np.array(estimation_per_iter) ** d
+            estimation_per_iter = np.array(estimation_per_iter)
             return estimation_per_iter.tolist()
         
         except Exception as e:

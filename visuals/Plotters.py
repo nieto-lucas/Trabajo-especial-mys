@@ -171,14 +171,15 @@ class Plotters:
 
         fig = plt.figure()
         ax = fig.add_subplot(111, projection='3d')
-        ax.plot_surface(X, Y, Z, cmap='plasma', alpha=0.4)
+        ax.plot_surface(X, Y, Z, cmap='viridis', alpha=0.4)
 
         dx = dy = 1 / len(samples) ** 0.7
         for x, y, z in zip(x_samples, y_samples, z_samples):
-            ax.bar3d(x, y, 0, dx, dy, z, color='red', alpha=0.3)
+            ax.bar3d(x, y, 0, dx, dy, z, color='green', alpha=0.3)
 
         ax.view_init(elev=30, azim=60)
-        ax.set_title(rf"Estimación de Monte Carlo para $\mathcal{{I}}_{{2}}$ ≈ {integral_aprox:.4f}")
+        ax.set_title(rf"Estimación de Monte Carlo para $\mathcal{{I}}_{{2}}$ ≈ {integral_aprox:.4f}"
+                     f"\nRNG: {rng.name()}")
         plt.show()
 
     def gaussian_estimations_Ndim(dim_res: Dict[int, Dict[str, List[float]]]) -> None:
@@ -220,41 +221,4 @@ class Plotters:
         axes[0].set_ylabel("Estimación de la integral")
         fig.suptitle("Estimación de Monte Carlo por generador y dimensión", fontsize=16)
         fig.tight_layout(rect=[0, 0.03, 1, 0.95])
-        plt.show()
-
-    @staticmethod
-    def histogram_plot_with_mean(dimensional_results: Dict[int, Dict[str, List[float]]], 
-                                 bins: int = 20) -> None:
-        """
-        """
-        sns.set_theme()
-        
-        dims = sorted(dimensional_results.keys())
-        gens = sorted({gen for dim in dims for gen in dimensional_results[dim]})
-        
-        n_rows = len(dims)
-        n_cols = len(gens)
-
-        fig, axes = plt.subplots(n_rows, n_cols, figsize=(5 * n_cols, 4 * n_rows), squeeze=False)
-
-        for i, dim in enumerate(dims):
-            for j, gen in enumerate(gens):
-                ax = axes[i][j]
-                values = dimensional_results[dim].get(gen)
-
-                if values is None:
-                    ax.axis('off')
-                    continue
-
-                mean_val = np.mean(values)
-
-                sns.histplot(values, bins=bins, kde=False, ax=ax, color="skyblue", edgecolor="black")
-                ax.axvline(mean_val, color='red', linestyle='--', label=f'Media = {mean_val:.4f}')
-                ax.set_title(f'Dim: {dim}, Gen: {gen}')
-                ax.set_xlabel("Estimaciones")
-                ax.set_ylabel("Frecuencia")
-                ax.legend()
-
-        fig.suptitle("Histogramas de estimaciones de Monte Carlo", fontsize=16)
-        plt.tight_layout()
         plt.show()

@@ -5,8 +5,8 @@ class Xorshift(RNG):
     def __init__(self, seed: int = int(time())):
         super().__init__(seed)
 
-    def seed(self, seed:int):
-        self.seed = seed
+    def set_seed(self, seed:int):
+        self._seed = seed
 
     def next(self) -> int:
         """

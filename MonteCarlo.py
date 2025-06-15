@@ -65,7 +65,7 @@ class MonteCarlo:
     @staticmethod
     def get_estimation_per_iter(Nsamples: int,
                                 g: Callable[[float], float],
-                                rng: RNG) -> List[float]:
+                                rng: RNG, Nvars: int) -> List[float]:
         """
         Método que obtiene del método de Monte Carlo para una variable
         el resultado de (g(U1)+...+g(Un))/n para cada n-esima iteración 
@@ -83,8 +83,8 @@ class MonteCarlo:
         integral_iter = []        
         integral = 0
         for n in range(Nsamples):
-            U = rng.rand01()
-            integral += g(U)
+            uniforms = np.array([rng.rand01() for _ in range(Nvars)])
+            integral += g(uniforms)
             integral_iter.append(integral/(n+1))
         return integral_iter
 

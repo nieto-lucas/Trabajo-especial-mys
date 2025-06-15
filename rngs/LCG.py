@@ -12,8 +12,8 @@ class LCG(RNG):
         self._c = LCG_C
         self._m = LCG_M
 
-    def seed(self, seed:int) -> None:
-        self.seed = seed
+    def set_seed(self, seed: int) -> None:
+        self._seed = seed
 
 
     def next(self) -> int:

@@ -31,9 +31,9 @@ class MersenneTwister(RNG):
         super().__init__(seed_value)  # Llama al constructor de RNG
         self._mt = [0] * self.MT_STATE_SIZE
         self.index = self.MT_STATE_SIZE
-        self.seed(seed_value)
+        self.set_seed(seed_value)
 
-    def seed(self, seed):
+    def set_seed(self, seed):
         """Inicializa el generador con una semilla"""
         seed &= 0xFFFFFFFF # Asegurar 32 bits
         self._mt[0] = seed
